@@ -2,8 +2,12 @@
   "name": "odin-members-only-project",
   "version": "0.0.0",
   "private": true,
+  "repository": "github:shravzzv/ODIN-Members-only-project",
+  "bugs": "https://github.com/shravzzv/ODIN-Members-only-project/issues",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "devstart": "nodemon ./bin/www",
+    "dev": "SET DEBUG=odin-members-only-project:* & npm run devstart"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -12,5 +16,12 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=16.x",
+    "npm": "10.5.0"
   }
 }
