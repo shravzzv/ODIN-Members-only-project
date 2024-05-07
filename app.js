@@ -7,8 +7,10 @@ require('dotenv').config()
 
 const indexRouter = require('./routes/index')
 const usersRouter = require('./routes/users')
+const connectDB = require('./config/db.config')
 
 const app = express()
+connectDB()
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
