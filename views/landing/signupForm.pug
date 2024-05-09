@@ -1,0 +1,46 @@
+extends layout
+
+block content
+  //- make it work initially using the server-side validation only. When it completely works, add the client-side validation.
+  form(action="", method="post", enctype = "multipart/form-data")
+    .formControl 
+      label(for="firstName") First name:
+      input#firstName(type="text", name="firstName", placeholder="John", value=(user ? user.firstName : ''))
+    .formControl 
+      label(for="lastName") Last name:
+      input#lastName(type="text", name="lastName", placeholder="Doe", value=(user ? user.lastName : ''))
+    .formControl 
+      label(for="email") Email: 
+      input#email(type="email", name="email", placeholder="johndoe@mail.com", value=(user ? user.email : ''))
+    .formControl
+      label(for="username") Username:
+      input#username(type="text", name="username", placeholder="johnnyD", value=(user ? user.username : ''))
+    .formControl
+      label(for="password") Password:
+      input#password(type="password", name="password", value=(user ? user.password : ''))
+    .formControl
+      label(for="passwordConfirm") Confirm Password:
+      input#passwordConfirm(type="password", name="passwordConfirm", value=(user ? user.passwordConfirm : ''))
+    .formControl
+      label(for="dateOfBirth") Date of Birth:
+      input#dateOfBirth(type="date", name="dateOfBirth", value=(user ? user.dobForInput : ''))
+    if user && user.profilePicUrl.includes("cloudinary")
+      img(src=user.profilePicUrl, alt=user.username)
+      input(type="hidden", name="profilePicUrl", value=user.profilePicUrl)
+      .formControl
+        label(for="profilePicUrl") Update profile picture:
+        input#profilePicUrl(type="file", name="file")
+    else 
+      .formControl
+        label(for="profilePicUrl") Profile picture:
+        input#profilePicUrl(type="file", name="file")
+    .formControl
+      label(for="bio") Bio:
+      textarea#bio(name="bio", cols="30", rows="10", placeholder="Tell us something about you...")=(user ? user.bio : '')
+    button(type="submit") Sign Up
+  if errors
+    .errors
+      h2 Errors
+      ol 
+        for error in errors
+          li!= error.msg || error.message 

@@ -1,7 +1,10 @@
 const asyncHandler = require('express-async-handler')
-const { body, validateRequest } = require('express-validator')
+const { body, validationResult, matchedData } = require('express-validator')
 const User = require('../models/user')
 const Message = require('../models/message')
+const multerUtils = require('../utils/multer.util')
+const handleImage = require('../middlewares/handleImage.middleware')
+const bcrypt = require('bcryptjs')
 
 // The landing page home.
 exports.index = (req, res) => {
@@ -14,7 +17,114 @@ exports.usersignupGet = (req, res) => {
 }
 
 // Handle signup on POST.
-exports.userSignupPost = []
+exports.userSignupPost = [
+  // upload image using multer
+  multerUtils.upload.single('file'),
+
+  // use middleware to handle the uploaded image
+  handleImage,
+
+  // validate and sanitize fields all User fields except "profilePicUrl" and "messages" because we're using matchedData() to create the new User object
+  body('firstName')
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage('First name must be atleast 3 characters long.')
+    .bail()
+    .isLength({ max: 20 })
+    .withMessage('First name must be a maximum of 20 characters long.')
+    .escape(),
+
+  body('lastName')
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage('Last name must be atleast 3 characters long.')
+    .bail()
+    .isLength({ max: 20 })
+    .withMessage('Last name must be a maximum of 20 characters long.')
+    .escape(),
+
+  body('email')
+    .trim()
+    .notEmpty()
+    .withMessage('Email must not be empty.')
+    .bail()
+    .isEmail()
+    .withMessage('Email is not a valid email address.')
+    .escape()
+    .custom(async (value) => {
+      const existingUser = await User.findOne({ email: value })
+      if (existingUser) throw new Error(`E-mail "${value}" is already in use.`)
+    }),
+
+  body('username')
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage('username must be atleast 3 characters long.')
+    .bail()
+    .isLength({ max: 20 })
+    .withMessage('username must be a maximum of 20 characters long.')
+    .escape()
+    .custom(async (value) => {
+      const existingUser = await User.findOne({ username: value })
+      if (existingUser)
+        throw new Error(`Username "${value}" is already in use.`)
+    }),
+
+  body('password')
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage('Password must be atleast 8 characters long.'),
+
+  body('passwordConfirm')
+    .trim()
+    .notEmpty()
+    .withMessage('Password confirm must not be empty.')
+    .bail()
+    .custom((value, { req }) => {
+      return value === req.body.password
+    })
+    .withMessage(`Password confirm doesn't match the password.`),
+
+  body('dateOfBirth')
+    .isDate()
+    .withMessage('Date of Birth should be a valid date.')
+    // if dob is empty, it causes type error with the Schema
+    .default(new Date(0)),
+
+  body('bio').trim().optional().escape(),
+
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req)
+
+    // create User object with sanitized data
+    const user = new User({
+      ...matchedData(req, { onlyValidData: false }),
+      profilePicUrl: req.uploadedUrl || '', // from the handleImage middleware
+    })
+    // onlyValidData is not allowed here for showing erronours inputs in the error output (for eg. show already existing email that was input). Invalid values will never be saved in the db because when invalid values are present, the 'errors' array will be true which displays the error page.
+
+    if (errors.isEmpty() && !req.imageError) {
+      // hash the user password
+      const hashedPassword = await bcrypt.hash(matchedData(req).password, 10)
+      user.password = hashedPassword
+
+      await user.save()
+      res.redirect('signin')
+    } else {
+      const allErrors = errors.array()
+      if (req.imageError) allErrors.push(req.imageError)
+
+      // set the entered value for password confirm for re-displaying in error
+      user.passwordConfirm = req.body.passwordConfirm
+
+      res.render('landing/signupForm', {
+        title: 'Sign Up Error',
+        user,
+        errors: allErrors,
+      })
+    }
+  }),
+]
 
 // Display signin form on GET.
 exports.userSigninGet = (req, res) => {
@@ -22,7 +132,11 @@ exports.userSigninGet = (req, res) => {
 }
 
 // Handle signin on POST.
-exports.userSigninPost = []
+exports.userSigninPost = [
+  asyncHandler(async (req, res) => {
+    res.send('User sign in post not implemented')
+  }),
+]
 
 // Handle logout on GET.
 exports.userLogoutGET = asyncHandler(async (req, res, next) => {

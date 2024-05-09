@@ -7,10 +7,10 @@ require('dotenv').config()
 
 const indexRouter = require('./routes/index')
 const dashboardRouter = require('./routes/dashboard')
-const connectDB = require('./config/db.config')
+require('./config/db.config')
+require('./config/cloudinary.config')
 
 const app = express()
-connectDB()
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
