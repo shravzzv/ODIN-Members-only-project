@@ -7,6 +7,8 @@ const passport = require('passport')
 const session = require('express-session')
 const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcryptjs')
+const mongoose = require('mongoose')
+const MongoStore = require('connect-mongo')
 require('dotenv').config()
 
 require('./config/db.config')
@@ -33,6 +35,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    store: MongoStore.create({ client: mongoose.connection.getClient() }),
   })
 )
 app.use(passport.session())
