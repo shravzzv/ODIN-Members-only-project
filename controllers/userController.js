@@ -1,7 +1,6 @@
 const asyncHandler = require('express-async-handler')
 const { body, validationResult, matchedData } = require('express-validator')
 const User = require('../models/user')
-const Message = require('../models/message')
 const multerUtils = require('../utils/multer.util')
 const handleImage = require('../middlewares/handleImage.middleware')
 const bcrypt = require('bcryptjs')
@@ -54,7 +53,7 @@ exports.userSignupPost = [
     .escape()
     .custom(async (email) => {
       const existingUser = await User.findOne({ email }, '_id')
-      if (existingUser) throw new Error(`E-mail "${email}" is already in use.`)
+      if (existingUser) throw new Error(`E-mail already in use.`)
     }),
 
   body('username')
@@ -67,8 +66,7 @@ exports.userSignupPost = [
     .escape()
     .custom(async (username) => {
       const existingUser = await User.findOne({ username }, '_id')
-      if (existingUser)
-        throw new Error(`Username "${username}" is already in use.`)
+      if (existingUser) throw new Error(`Username already in use.`)
     }),
 
   body('password')
@@ -84,13 +82,12 @@ exports.userSignupPost = [
     .custom((value, { req }) => {
       return value === req.body.password
     })
-    .withMessage(`Password confirm doesn't match the password.`),
+    .withMessage(`Doesn't match the password.`),
 
   body('dateOfBirth')
+    .optional({ values: 'falsy' })
     .isDate()
-    .withMessage('Date of Birth should be a valid date.')
-    // if dob is empty, it causes type error with the Schema
-    .default(new Date(0)),
+    .withMessage('Date of Birth should be a valid date.'),
 
   body('bio').trim().optional().escape(),
 
@@ -99,10 +96,10 @@ exports.userSignupPost = [
 
     // create User object with sanitized data
     const user = new User({
-      ...matchedData(req, { onlyValidData: false }),
+      ...matchedData(req, { onlyValidData: false, includeOptionals: true }),
       profilePicUrl: req.uploadedUrl || '', // from the handleImage middleware
     })
-    // onlyValidData is not allowed here for showing erronours inputs in the error output (for eg. show already existing email that was input). Invalid values will never be saved in the db because when invalid values are present, the 'errors' array will be true which displays the error page.
+    // onlyValidData is not allowed here for showing erronous inputs in the error output (for eg. show already existing email that was input). Invalid values will never be saved in the db because when invalid values are present, the 'errors' array will be true which displays the error page.
 
     if (errors.isEmpty() && !req.imageError) {
       // hash the user password
@@ -113,7 +110,11 @@ exports.userSignupPost = [
       next()
     } else {
       const allErrors = errors.array()
-      if (req.imageError) allErrors.push(req.imageError)
+      if (req.imageError)
+        allErrors.push({
+          msg: req.imageError.message,
+          path: 'file',
+        })
 
       // set the entered value for password confirm for re-displaying in error
       user.passwordConfirm = req.body.passwordConfirm
@@ -135,12 +136,8 @@ exports.userSignupPost = [
 
 // Display signin form on GET.
 exports.userSigninGet = (req, res) => {
-  const errors = req?.session?.messages?.slice(-1)
-  // Here, errors needs to only handle invalid passwords because username errors are handled directly in the userSigninPost method. Passport pushes the error message to the req.session.messages, and we're only getting the latest error message.
-
   res.render('landing/signinForm', {
     title: 'Sign In',
-    errors,
   })
 }
 
@@ -156,7 +153,7 @@ exports.userSigninPost = [
     .escape()
     .custom(async (username) => {
       const user = await User.findOne({ username }, '_id')
-      if (!user) throw new Error(`Username "${username}" doesn't exist.`)
+      if (!user) throw new Error(`Username doesn't exist.`)
     }),
 
   body('password')
@@ -164,7 +161,7 @@ exports.userSigninPost = [
     .isLength({ min: 8 })
     .withMessage('Password must be atleast 8 characters long.'),
 
-  asyncHandler((req, res, next) => {
+  asyncHandler(async (req, res, next) => {
     const errors = validationResult(req)
 
     if (errors.isEmpty()) {
@@ -181,10 +178,23 @@ exports.userSigninPost = [
     }
   }),
 
-  passport.authenticate('local', {
-    failureRedirect: '/signin',
-    successRedirect: '/dashboard',
-    failureMessage: true,
+  asyncHandler(async (req, res, next) => {
+    // passport.authenticate with a custom callback function
+    passport.authenticate('local', function (err, user, info) {
+      if (err) return next(err)
+      if (!user)
+        return res.render('landing/signinForm', {
+          title: 'Sign In Error',
+          errors: [info],
+          username: req.body.username,
+          password: req.body.password,
+        })
+
+      req.logIn(user, (err) => {
+        if (err) return next(err)
+        return res.redirect('/dashboard')
+      })
+    })(req, res, next)
   }),
 ]
 

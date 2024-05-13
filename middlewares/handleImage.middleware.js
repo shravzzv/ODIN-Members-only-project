@@ -15,9 +15,7 @@ const handleImage = async (req, res, next) => {
 
   if (req.file) {
     if (!req.file.mimetype.startsWith('image/')) {
-      req.imageError = new Error(
-        'Please upload an image for the Profile Picture.'
-      )
+      req.imageError = new Error('Please upload an image file.')
     } else {
       if (req.body.profilePicUrl)
         await cloudinaryUtils.deleteUploadedFile(req.body.profilePicUrl)

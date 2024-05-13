@@ -51,8 +51,10 @@ passport.use(
       const match = await bcrypt.compare(password, user.password)
       if (!match)
         return done(null, false, {
-          message: `Incorrect password for username "${username}".`,
+          path: 'password',
+          msg: `Incorrect password.`,
         })
+      // errors are sent this way to match express-validator error structure
 
       return done(null, user)
     } catch (error) {

@@ -15,9 +15,9 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
   isClubMember: { type: Boolean, required: true, default: false },
   messages: [{ type: Schema.Types.ObjectId, ref: 'Messages' }],
-  bio: { type: String, maxLength: 255, default: '' },
-  dateOfBirth: { type: Date, default: new Date(0) },
+  dateOfBirth: { type: Date, default: null },
   profilePicUrl: { type: String, default: '' },
+  bio: { type: String, maxLength: 255, default: '' },
 })
 
 UserSchema.virtual('fullName').get(function () {
