@@ -14,7 +14,7 @@ router.get(
 )
 
 // POST request for creating a User.
-router.post('/signup', userController.userSignupPost)
+router.post('/signup', authMiddleware.redirectOnAuth)
 
 // GET request for logging in a User.
 router.get(
@@ -24,10 +24,7 @@ router.get(
 )
 
 // POST request for logging in a User.
-router.post('/signin', userController.userSigninPost)
-
-// GET request for logging out a User.
-router.get('/logout', authMiddleware.protect ,userController.userLogoutGET)
+router.post('/signin', authMiddleware.redirectOnAuth)
 
 // redirect for common synonyms
 router.get('/register', (req, res) => res.redirect('signup'))

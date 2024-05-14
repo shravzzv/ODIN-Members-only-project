@@ -198,10 +198,72 @@ exports.userSigninPost = [
   }),
 ]
 
-// Handle logout on GET.
-exports.userLogoutGET = asyncHandler(async (req, res, next) => {
+// Handle logout on POST.
+exports.userLogoutPost = asyncHandler(async (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err)
     res.redirect('/signin')
   })
 })
+
+// Display user delete form on GET.
+exports.userDeleteGet = (req, res) => {
+  res.send('UserDeleteGet not implemented.')
+}
+
+// Handle user delete on POST.
+exports.userDeletePost = (req, res, next) => {
+  res.send('UserDeletePost not implemented.')
+}
+
+// Display user update form on GET.
+exports.userUpdateGet = (req, res) => {
+  res.send('UserUpdateGet not implemented.')
+}
+
+// Handle user update on POST.
+exports.userUpdatePost = (req, res, next) => {
+  res.send('UserUpdatePost not implemented.')
+}
+
+// Get details of a one user.
+exports.userDetail = (req, res, next) => {
+  res.send('UserDetail not implemented.')
+}
+
+// Get a list of all users.
+exports.usersList = (req, res, next) => {
+  res.send('UsersList not implemented.')
+}
+
+// Display the authenticated user profile.
+exports.profile = (req, res, next) => {
+  res.render('dashboard/profile', { title: 'Profile', user: req.user })
+}
+
+// Display the club page.
+exports.club = asyncHandler(async (req, res, next) => {
+  res.render('dashboard/club', { title: 'Club', user: req.user })
+})
+
+// * Only Admin can delete other users, everyone else can only delete their own account.
+
+// Display profile delete form on GET.
+exports.profileDeleteGet = (req, res) => {
+  res.send('profileDeleteGet not implemented.')
+}
+
+// Handle profile delete on POST.
+exports.profileDeletePost = (req, res, next) => {
+  res.send('profileDeletePost not implemented.')
+}
+
+// Display profile update form on GET.
+exports.profileUpdateGet = (req, res) => {
+  res.send('profileUpdateGet not implemented.')
+}
+
+// Handle profile update on POST.
+exports.profileUpdatePost = (req, res, next) => {
+  res.send('profileUpdatePost not implemented.')
+}
