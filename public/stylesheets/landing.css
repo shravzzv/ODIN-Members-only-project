@@ -339,6 +339,7 @@ main:not(:has(.hero)) {
         border-radius: 100px;
         transition: background-color 300ms ease;
 
+        &.active,
         &:hover {
           background-color: var(--primary-container);
         }
