@@ -14,7 +14,6 @@ const UserSchema = new Schema({
   },
   password: { type: String, required: true },
   isClubMember: { type: Boolean, required: true, default: false },
-  messages: [{ type: Schema.Types.ObjectId, ref: 'Messages' }],
   dateOfBirth: { type: Date, default: null },
   profilePicUrl: { type: String, default: '' },
   bio: { type: String, maxLength: 255, default: '' },
