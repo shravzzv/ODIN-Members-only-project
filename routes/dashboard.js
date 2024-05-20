@@ -7,8 +7,7 @@ const userController = require('../controllers/userController')
 // * all routes in this file need authentication
 router.use(authMiddleware.protect)
 
-// * dashboard route
-
+// GET dashboard home page.
 router.get('/', messageController.index)
 
 // * dashboard/compose routes
@@ -33,12 +32,6 @@ router.get('/message/:id/update', messageController.messageUpdateGet)
 // POST request to update a Message.
 router.post('/message/:id/update', messageController.messageUpdatePost)
 
-// GET request for one Message.
-router.get('/message/:id', messageController.messageDetailGet)
-
-// GET request for a list of all Messages.
-router.get('/messages', (req, res) => res.redirect('/dashboard'))
-
 // * dashboard/profile routes
 // profile means the logged in user, accessible via req.user
 
@@ -60,13 +53,33 @@ router.get('/profile/update', userController.profileUpdateGet)
 // POST request to update a User.
 router.post('/profile/update', userController.profileUpdatePost)
 
+// * dashboard/password routes
+
+// GET request to update the password.
+router.get('/password/update', userController.passwordUpdateGet)
+
+// POST request to update the password.
+router.post('/password/update', userController.passwordUpdatePost)
+
+// The user needs to know the current password inorder to update his password. If they don't, forgot password is used.
+
+// GET request to handle forgotten password.
+router.get('/password/forgot', userController.passwordForgotGet)
+
+// POST request to handle forgotten password email code.
+router.post('/password/forgot/code', userController.passwordForgotCodePost)
+
+// POST request to create new password.
+router.post(
+  '/password/forgot/newpassword',
+  userController.passwordForgotNewPasswordPost
+)
+
 // * dashboard/user routes
 
 // GET request for one User.
+// If there are any routes that are of the form '/user/something', this routes should come after that.
 router.get('/user/:id', userController.userDetail)
-
-// GET request for all users.
-router.get('/users', userController.usersList)
 
 // * The below routes should only be accessible to the admin.
 
@@ -85,6 +98,20 @@ router.post('/user/:id/update', userController.userUpdatePost)
 // * dashboard/club routes
 
 // Get request for the club page.
-router.get('/club', userController.club)
+router.get('/club', userController.clubGet)
+
+// POST request for adding a user to the club.
+router.post('/club/join', userController.clubJoinPost)
+
+// POST request for adding a user to the club.
+router.post('/club/leave', userController.clubLeavePost)
+
+// * dashboard/search routes
+
+// Get request for the search page
+router.get('/search', userController.searchGet)
+
+// Post request for the search page
+router.post('/search', userController.searchPost)
 
 module.exports = router

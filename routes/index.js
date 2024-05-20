@@ -14,7 +14,11 @@ router.get(
 )
 
 // POST request for creating a User.
-router.post('/signup', authMiddleware.redirectOnAuth)
+router.post(
+  '/signup',
+  authMiddleware.redirectOnAuth,
+  userController.userSignupPost
+)
 
 // GET request for logging in a User.
 router.get(
@@ -24,7 +28,11 @@ router.get(
 )
 
 // POST request for logging in a User.
-router.post('/signin', authMiddleware.redirectOnAuth)
+router.post(
+  '/signin',
+  authMiddleware.redirectOnAuth,
+  userController.userSigninPost
+)
 
 // redirect for common synonyms
 router.get('/register', (req, res) => res.redirect('signup'))
