@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h1 Delete message: #{message.title}?
+  form(action="", method="post") 
+    .formControl
+      label(for="confirmation") Are you sure you want to delete this message?
+      input#messageId(type='hidden', name='messageId', value=message.id )
+    button(type="submit") Delete

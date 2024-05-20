@@ -10,15 +10,15 @@ const cloudinaryUtils = require('../utils/cloudinary.util')
 
  */
 const handleImage = async (req, res, next) => {
-  // Use existing profile picture URL from the request body if available
-  if (req.body.profilePicUrl) req.uploadedUrl = req.body.profilePicUrl
+  // Use existing picture URLs from the request body if available; the name in the hidden input must be imgUrl
+  if (req.body.imgUrl) req.uploadedUrl = req.body.imgUrl
 
   if (req.file) {
     if (!req.file.mimetype.startsWith('image/')) {
       req.imageError = new Error('Please upload an image file.')
     } else {
-      if (req.body.profilePicUrl)
-        await cloudinaryUtils.deleteUploadedFile(req.body.profilePicUrl)
+      if (req.body.imgUrl)
+        await cloudinaryUtils.deleteUploadedFile(req.body.imgUrl)
 
       req.uploadedUrl = await cloudinaryUtils.getUploadedUrl(req.file.path)
     }

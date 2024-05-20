@@ -1,0 +1,31 @@
+extends layout
+
+mixin clubBenefits
+  h2 Club benefits include:
+  ol
+    li See all of the messages metadata such as the title, cover image, author, tags, last update time.
+    li Search for messages and users using usernames, first and last names, tags, titles, message content and bios.
+
+block content
+  h1= user.firstName + ' ' + user.lastName
+
+  if !user.isClubMember 
+    p Join the club.
+    form(action="/dashboard/club/join", method="post") 
+      .formControl
+        label(for="secret") Club secret:  
+        input#secret(type="text", name="secret", placeholder="do you know the secret code?")
+        - const secretError = errors && errors.find(item => item.path === 'secret')
+        if secretError
+          span.error= secretError.msg
+
+      button(type="submit") Join
+    p The secret is the number of my GitHub contributions in the year 2023. To join the club, you have to search for it. You can find the link to my GitHub profile somewhere on this app, but not on this page.
+    +clubBenefits
+
+  else 
+    p Yeah! You're a part of the club.
+    +clubBenefits
+    form(action="/dashboard/club/leave", method="post")
+      button(type="submit") Leave the club
+    

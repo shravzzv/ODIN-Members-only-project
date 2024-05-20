@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1 Sign Up
+  h1 Update profile
 
   form(action="", method="post", enctype = "multipart/form-data")
 
@@ -26,17 +26,6 @@ block content
       - const usernameError = errors && errors.find(item => item.path === 'username')
       if usernameError
         span.error= usernameError.msg
-
-    .formControl
-      label(for="password") Password*:
-      input#password(type="password", name="password", value=(user ? user.password : ''), required, minlength="8")
-
-    .formControl
-      label(for="passwordConfirm") Confirm Password*:
-      input#passwordConfirm(type="password", name="passwordConfirm", value=(user ? user.passwordConfirm : ''), required, minlength="8")
-      - const pwdConfirmError = errors && errors.find(item => item.path === 'passwordConfirm')
-      if pwdConfirmError
-        span.error= pwdConfirmError.msg
 
     .formControl
       label(for="dateOfBirth") Date of Birth:
