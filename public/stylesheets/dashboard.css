@@ -152,14 +152,21 @@ nav {
   nav {
     /* a left navigation rail */
     background-color: var(--surface-container);
-    position: sticky;
+    position: fixed;
     left: 0;
     top: 0;
     width: 80px;
     height: 100vh;
-    padding: 0 12px;
-    display: flex;
-    align-items: center;
+    padding: 12px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: flex; /* required for centering the ul vertically  */
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 
     ul {
       display: flex;
@@ -167,6 +174,7 @@ nav {
       align-items: center;
       justify-content: flex-start;
       gap: 12px;
+      margin: auto;
 
       li {
         a {
@@ -188,6 +196,7 @@ nav {
   body {
     display: flex;
     gap: 24px;
+    margin-left: calc(80px + 24px); /* to offset the fixed navigation rail */
   }
 
   .pane {
@@ -219,7 +228,7 @@ nav {
     /* a standard navigation drawer */
     background-color: var(--surface);
     width: 360px;
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
@@ -272,6 +281,10 @@ nav {
         }
       }
     }
+  }
+
+  body {
+    margin-left: calc(360px + 24px); /* to offset the fixed navigation drawer */
   }
 }
 
