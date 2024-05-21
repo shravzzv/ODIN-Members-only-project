@@ -21,9 +21,13 @@ svg {
   fill: var(--on-surface);
 }
 
-/* nav styles that are common to all window size classes */
+/* nav styles that are common to all window size classes. 
+
+The navigation bar and rail have a lot in common, so some styles that are common to both of them, but different in the navigation drawer are also written here. They are simply overwritten for the navigation drawer under the specific media query. */
 nav {
-  background-color: var(--surface-container);
+  .headline {
+    display: none;
+  }
 
   ul {
     list-style-type: none;
@@ -37,8 +41,11 @@ nav {
         outline: none;
 
         .iconContainer {
-          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           border-radius: 16px;
+          height: 32px;
 
           svg {
             width: 24px;
@@ -56,10 +63,13 @@ nav {
         span {
           font-weight: 500;
           line-height: 16px;
+          font-size: 12px;
           color: var(--on-surface-variant);
         }
 
         &.active {
+          /* in bar and rail, .iconContainer acts as the active indicator. */
+          /* in drawer, `a` acts as the active indicator. */
           .iconContainer {
             background-color: var(--secondary-container);
 
@@ -84,10 +94,8 @@ nav {
         &:is(:hover, :focus) {
           .iconContainer {
             background-color: var(--tertiary-container);
-
-            svg {
-              fill: var(--on-surface-variant);
-            }
+            /* background-color: var(--on-surface);
+            opacity: 38%; */
           }
         }
       }
@@ -102,6 +110,8 @@ nav {
 /* compact window class */
 @media (max-width: 599px) {
   nav {
+    /* a bottom navigation bar */
+    background-color: var(--surface-container);
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -117,8 +127,6 @@ nav {
         flex: 1;
 
         a {
-          text-decoration: none;
-          color: inherit;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -127,15 +135,6 @@ nav {
 
           .iconContainer {
             width: 64px;
-            height: 32px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-          span {
-            font-size: 12px;
           }
         }
       }
@@ -151,6 +150,8 @@ nav {
 /* medium window size class */
 @media (min-width: 600px) and (max-width: 839px) {
   nav {
+    /* a left navigation rail */
+    background-color: var(--surface-container);
     position: sticky;
     left: 0;
     top: 0;
@@ -168,9 +169,8 @@ nav {
       gap: 12px;
 
       li {
-        height: 56px;
-
         a {
+          height: 56px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -178,16 +178,7 @@ nav {
           gap: 4px;
 
           .iconContainer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 32px;
             width: 56px;
-          }
-
-          span {
-            font-size: 12px;
-            letter-spacing: 0.5px;
           }
         }
       }
@@ -208,7 +199,7 @@ nav {
 /* expanded window size class */
 @media (min-width: 840px) and (max-width: 1199px) {
   /* 
-    todo: use two panes in the body with 24px horizontal padding, the gap between the panes is also 24px
+  todo: use two panes in the body with 24px horizontal padding, the gap between the panes is also 24px
   */
 
   body {
@@ -220,29 +211,72 @@ nav {
     padding: 24px;
     border-radius: 15px;
   }
+}
 
+/* standard navigation drawer is the same for expanded, large and extra large window size classes  */
+@media (min-width: 840px) {
   nav {
-    position: static;
-    order: -1;
-    border-radius: 15px;
-    padding: 0 24px;
+    /* a standard navigation drawer */
+    background-color: var(--surface);
+    width: 360px;
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    padding: 24px 12px;
+
+    .headline {
+      display: block;
+      line-height: 20px;
+      font-size: 18px;
+      font-weight: 500;
+      padding: 16px;
+      margin: 0;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
 
     ul {
-      display: flex;
-      flex-direction: column;
-      align-items: space-evenly;
-      justify-content: space-evenly;
-      height: 100%;
+      li {
+        a {
+          /* acts as the active indicator */
+          height: 56px;
+          width: 336px;
+          border-radius: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 12px;
+          padding: 0 16px;
+
+          .iconContainer {
+            height: 100%;
+          }
+
+          span {
+            font-size: 14px;
+            line-height: 20px;
+          }
+
+          &.active {
+            background-color: var(--secondary-container);
+
+            span {
+              color: var(--on-secondary-container);
+            }
+          }
+
+          &:is(:hover, :focus) {
+            background-color: var(--tertiary-container);
+          }
+        }
+      }
     }
   }
 }
 
 /* large window size class */
 @media (min-width: 1200px) and (max-width: 1599px) {
-  /*
-    todo: use a persistent left navigation drawer
-  */
-
   body {
     display: flex;
     gap: 24px;
@@ -251,21 +285,6 @@ nav {
   .pane {
     padding: 24px;
     border-radius: 15px;
-  }
-
-  nav {
-    position: static;
-    order: -1;
-    border-radius: 15px;
-    padding: 0 24px;
-
-    ul {
-      display: flex;
-      flex-direction: column;
-      align-items: space-evenly;
-      justify-content: space-evenly;
-      height: 100%;
-    }
   }
 }
 
@@ -279,20 +298,5 @@ nav {
   .pane {
     padding: 24px;
     border-radius: 15px;
-  }
-
-  nav {
-    position: static;
-    order: -1;
-    border-radius: 15px;
-    padding: 0 24px;
-
-    ul {
-      display: flex;
-      flex-direction: column;
-      align-items: space-evenly;
-      justify-content: space-evenly;
-      height: 100%;
-    }
   }
 }

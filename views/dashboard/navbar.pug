@@ -1,4 +1,5 @@
 nav
+  h1.headline Clubcord
   ul
     li
       a(href="/dashboard") 
@@ -40,3 +41,9 @@ script.
     if (navLink.pathname === window.location.pathname)
       navLink.classList.add('active')
   })
+
+//- ? Maybe you can use the Compose as a FAB in >=medium layouts?
+//- * you just need to add a FAB before the ul and hide it in compact layouts. Maybe you can even add a menu icon along with it.
+
+//- ! when going to destinations not present on the navbar, the navbar doesn't seem good.
+//- todo: Add update profile and password in navigation drawer.
