@@ -21,6 +21,7 @@ svg {
   fill: var(--on-surface);
 }
 
+/* nav styles that are common to all window size classes */
 nav {
   background-color: var(--surface-container);
 
@@ -28,6 +29,69 @@ nav {
     list-style-type: none;
     margin: 0;
     padding: 0;
+
+    li {
+      a {
+        text-decoration: none;
+        color: inherit;
+        outline: none;
+
+        .iconContainer {
+          height: 32px;
+          border-radius: 16px;
+
+          svg {
+            width: 24px;
+            fill: var(--on-surface-variant);
+
+            &.regular {
+              display: block;
+            }
+            &.filled {
+              display: none;
+            }
+          }
+        }
+
+        span {
+          font-weight: 500;
+          line-height: 16px;
+          color: var(--on-surface-variant);
+        }
+
+        &.active {
+          .iconContainer {
+            background-color: var(--secondary-container);
+
+            svg {
+              fill: var(--on-secondary-container);
+
+              &.filled {
+                display: block;
+              }
+              &.regular {
+                display: none;
+              }
+            }
+          }
+
+          span {
+            font-weight: 700;
+            color: var(--on-surface);
+          }
+        }
+
+        &:is(:hover, :focus) {
+          .iconContainer {
+            background-color: var(--tertiary-container);
+
+            svg {
+              fill: var(--on-surface-variant);
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -68,51 +132,11 @@ nav {
             display: flex;
             align-items: center;
             justify-content: center;
-
-            svg {
-              width: 24px;
-
-              &.regular {
-                display: block;
-              }
-              &.filled {
-                display: none;
-              }
-            }
           }
 
           span {
             font-size: 12px;
-            font-weight: 500;
-            line-height: 16px;
           }
-
-          &.active {
-            .iconContainer {
-              background-color: var(--secondary-container);
-
-              svg {
-                fill: var(--on-secondary-container);
-
-                &.filled {
-                  display: block;
-                }
-                &.regular {
-                  display: none;
-                }
-              }
-            }
-
-            span {
-              font-weight: 700;
-              color: var(--on-surface);
-            }
-          }
-
-          /* &:hover, */
-          /* &:focus { */
-          /* } */
-          /* not adding this now because of the absence of a state layer. */
         }
       }
     }
@@ -126,6 +150,50 @@ nav {
 
 /* medium window size class */
 @media (min-width: 600px) and (max-width: 839px) {
+  nav {
+    position: sticky;
+    left: 0;
+    top: 0;
+    width: 80px;
+    height: 100vh;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+
+      li {
+        height: 56px;
+
+        a {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+
+          .iconContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 32px;
+            width: 56px;
+          }
+
+          span {
+            font-size: 12px;
+            letter-spacing: 0.5px;
+          }
+        }
+      }
+    }
+  }
+
   body {
     display: flex;
     gap: 24px;
@@ -135,40 +203,10 @@ nav {
     padding: 24px;
     border-radius: 15px;
   }
-
-  nav {
-    position: static;
-    order: -1;
-    border-radius: 15px;
-    padding: 0 24px;
-
-    ul {
-      display: flex;
-      flex-direction: column;
-      align-items: space-evenly;
-      justify-content: space-evenly;
-      height: 100%;
-    }
-  }
 }
 
 /* expanded window size class */
 @media (min-width: 840px) and (max-width: 1199px) {
-  nav {
-    position: static;
-    order: -1;
-    border-radius: 15px;
-    padding: 0 24px;
-
-    ul {
-      display: flex;
-      flex-direction: column;
-      align-items: space-evenly;
-      justify-content: space-evenly;
-      height: 100%;
-    }
-  }
-
   /* 
     todo: use two panes in the body with 24px horizontal padding, the gap between the panes is also 24px
   */
@@ -181,6 +219,21 @@ nav {
   .pane {
     padding: 24px;
     border-radius: 15px;
+  }
+
+  nav {
+    position: static;
+    order: -1;
+    border-radius: 15px;
+    padding: 0 24px;
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      align-items: space-evenly;
+      justify-content: space-evenly;
+      height: 100%;
+    }
   }
 }
 
