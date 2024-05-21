@@ -12,47 +12,115 @@
 body {
   background-color: var(--surface);
   color: var(--on-surface);
+  min-height: 100vh;
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  min-height: 100vh;
+}
+
+svg {
+  fill: var(--on-surface);
+}
+
+nav {
+  background-color: var(--surface-container);
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 .pane {
   background-color: var(--primary-container);
 }
 
-nav {
-  background-color: var(--surface-container);
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-svg{
-  fill: var(--on-surface)
-}
-
 /* compact window class */
 @media (max-width: 599px) {
-  .pane {
-    padding: 16px;
-    border-radius: 0;
-  }
-
   nav {
     position: fixed;
     bottom: 0;
     width: 100%;
-    padding: 20px 0;
+    padding: 12px 0 16px;
+    max-height: 80px;
 
     ul {
       display: flex;
       align-items: center;
       justify-content: space-evenly;
+
+      li {
+        flex: 1;
+
+        a {
+          text-decoration: none;
+          color: inherit;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+
+          .iconContainer {
+            width: 64px;
+            height: 32px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            svg {
+              width: 24px;
+
+              &.regular {
+                display: block;
+              }
+              &.filled {
+                display: none;
+              }
+            }
+          }
+
+          span {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 16px;
+          }
+
+          &.active {
+            .iconContainer {
+              background-color: var(--secondary-container);
+
+              svg {
+                fill: var(--on-secondary-container);
+
+                &.filled {
+                  display: block;
+                }
+                &.regular {
+                  display: none;
+                }
+              }
+            }
+
+            span {
+              font-weight: 700;
+              color: var(--on-surface);
+            }
+          }
+
+          /* &:hover, */
+          /* &:focus { */
+          /* } */
+          /* not adding this now because of the absence of a state layer. */
+        }
+      }
     }
+  }
+
+  .pane {
+    padding: 16px;
+    border-radius: 0;
   }
 }
 
@@ -86,20 +154,6 @@ svg{
 
 /* expanded window size class */
 @media (min-width: 840px) and (max-width: 1199px) {
-  /* 
-    todo: use two panes in the body with 24px horizontal padding, the gap between the panes is also 24px
-  */
-
-  body {
-    display: flex;
-    gap: 24px;
-  }
-
-  .pane {
-    padding: 24px;
-    border-radius: 15px;
-  }
-
   nav {
     position: static;
     order: -1;
@@ -113,6 +167,20 @@ svg{
       justify-content: space-evenly;
       height: 100%;
     }
+  }
+
+  /* 
+    todo: use two panes in the body with 24px horizontal padding, the gap between the panes is also 24px
+  */
+
+  body {
+    display: flex;
+    gap: 24px;
+  }
+
+  .pane {
+    padding: 24px;
+    border-radius: 15px;
   }
 }
 
