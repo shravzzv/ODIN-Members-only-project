@@ -1,4 +1,5 @@
 @import url(./designTokens.css);
+@import url(./components.css);
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 *,
@@ -21,10 +22,20 @@ svg {
   fill: var(--on-surface);
 }
 
+img {
+  max-width: 100%;
+
+  @media (prefers-color-scheme: dark) {
+    filter: brightness(0.8) contrast(1.2);
+  }
+}
+
 /* nav styles that are common to all window size classes. 
 
 The navigation bar and rail have a lot in common, so some styles that are common to both of them, but different in the navigation drawer are also written here. They are simply overwritten for the navigation drawer under the specific media query. */
 nav {
+  z-index: 1;
+
   .headline {
     display: none;
   }
@@ -104,7 +115,130 @@ nav {
 }
 
 .pane {
-  background-color: var(--primary-container);
+  background-color: var(--surface);
+  border-radius: 12px;
+  width: 100%;
+
+  .appBar {
+    h1 {
+      display: block;
+      text-align: center;
+      line-height: 20px;
+      font-size: 22px;
+      font-weight: 500;
+      padding: 16px;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+  }
+
+  .noMessages {
+    text-align: center;
+  }
+}
+
+.messagesContainer {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  /* grid item with flexible width but a minimum of 250 pixels. */
+  grid-gap: 8px;
+}
+
+.messageCard {
+  position: relative;
+  cursor: inherit;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .coverImageContainer {
+    border-radius: inherit;
+    img {
+      border-bottom-right-radius: 0px;
+      border-bottom-left-radius: 0px;
+      height: 100px;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .content {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+
+    .title {
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    .userProfile {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      img,
+      svg {
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        fill: var(--on-surface);
+      }
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .time {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      svg {
+        fill: var(--on-surface-variant);
+        width: 20px;
+      }
+    }
+
+    .buttons {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      a {
+        button {
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+            rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+          span {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+  &.messageCardBasic {
+    padding: 8px 16px;
+  }
 }
 
 /* compact window class */
@@ -141,9 +275,15 @@ nav {
     }
   }
 
+  body {
+    margin-bottom: calc(80px); /* offset the fixed navbar */
+    padding: 0;
+  }
+
   .pane {
-    padding: 16px;
+    padding: 0 16px 16px;
     border-radius: 0;
+    background-color: var(--surface);
   }
 }
 
@@ -194,39 +334,20 @@ nav {
   }
 
   body {
-    display: flex;
-    gap: 24px;
-    margin-left: calc(80px + 24px); /* to offset the fixed navigation rail */
+    margin-left: calc(80px); /* to offset the fixed navigation rail */
   }
 
   .pane {
-    padding: 24px;
-    border-radius: 15px;
+    padding: 0 24px 24px;
+    background-color: var(--surface);
   }
 }
 
-/* expanded window size class */
-@media (min-width: 840px) and (max-width: 1199px) {
-  /* 
-  todo: use two panes in the body with 24px horizontal padding, the gap between the panes is also 24px
-  */
-
-  body {
-    display: flex;
-    gap: 24px;
-  }
-
-  .pane {
-    padding: 24px;
-    border-radius: 15px;
-  }
-}
-
-/* standard navigation drawer is the same for expanded, large and extra large window size classes  */
+/* styles similar for expanded, large and extra large window size classes  */
 @media (min-width: 840px) {
   nav {
     /* a standard navigation drawer */
-    background-color: var(--surface);
+    background-color: var(--surface-container);
     width: 360px;
     position: fixed;
     top: 0;
@@ -284,32 +405,32 @@ nav {
   }
 
   body {
-    margin-left: calc(360px + 24px); /* to offset the fixed navigation drawer */
+    margin-left: calc(360px); /* to offset the fixed navigation drawer */
+    padding: 24px 24px 24px 0;
+    background-color: var(--surface-container);
+
+    .pane {
+      padding: 24px;
+      border-radius: 15px;
+      min-height: calc(100vh - 48px);
+
+      .appBar {
+        h1 {
+          display: none;
+        }
+      }
+    }
   }
+}
+
+/* expanded window size class */
+@media (min-width: 840px) and (max-width: 1199px) {
 }
 
 /* large window size class */
 @media (min-width: 1200px) and (max-width: 1599px) {
-  body {
-    display: flex;
-    gap: 24px;
-  }
-
-  .pane {
-    padding: 24px;
-    border-radius: 15px;
-  }
 }
 
 /* extra large window size class */
 @media (min-width: 1600px) {
-  body {
-    display: flex;
-    gap: 24px;
-  }
-
-  .pane {
-    padding: 24px;
-    border-radius: 15px;
-  }
 }

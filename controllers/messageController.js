@@ -13,7 +13,9 @@ exports.index = asyncHandler(async (req, res) => {
 
   const messages = []
   if (req.user.isClubMember) {
-    messages.push(...(await Message.find({}).populate('user', 'username')))
+    messages.push(
+      ...(await Message.find({}).populate('user', 'username profilePicUrl'))
+    )
   } else {
     messages.push(...(await Message.find({}, 'message')))
   }
