@@ -1,39 +1,53 @@
 extends layout
 
 block content
-  h1 Create new message
+  main.pane.compose
+    //- make it work with only server side validation first
+    - const titleError = errors && errors.find(item => item.path === 'title')
+    - const messageError = errors && errors.find(item => item.path === 'message')
+    - const fileError = errors && errors.find(item => item.path === 'file')
 
-  //- make it work with only server side validation first
-  - const titleError = errors && errors.find(item => item.path === 'title')
-  - const messageError = errors && errors.find(item => item.path === 'message')
-  - const fileError = errors && errors.find(item => item.path === 'file')
+    form(action="", method="post", enctype = "multipart/form-data")
+      .formControl
+        label(for="title") Title*:
+        input#title(type="text", name="title", placeholder="Express Validation.", value!=message ? message.title : '')
+        if titleError
+          span.error= titleError.msg
 
-  form(action="", method="post", enctype = "multipart/form-data")
-    .formControl
-      label(for="title") Title*:
-      input#title(type="text", name="title", placeholder="Express Validation.", value!=message ? message.title : '')
-      if titleError
-        span.error= titleError.msg
+      .formControl
+        label(for="message") Message*:
+        textarea#message(name="message", cols="30", rows="10", placeholder="Express validation allows users to...")!=message ? message.message : ''
+        if messageError
+          span.error= messageError.msg
 
-    .formControl
-      label(for="message") Message*:
-      textarea#message(name="message", cols="30", rows="10", placeholder="Express validation allows users to...")!=message ? message.message : ''
-      if messageError
-        span.error= messageError.msg
+      - const isCoverImgPresent = message && message.coverImgUrl.includes("cloudinary")
+      if isCoverImgPresent
+        .imageContainer
+          img(src=message.coverImgUrl, alt=message.title)
+          button#editCoverBtn.icon(type="button")
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M200-200h57l391-391-57-57-391 391v57Zm-40 80q-17 0-28.5-11.5T120-160v-97q0-16 6-30.5t17-25.5l505-504q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L313-143q-11 11-25.5 17t-30.5 6h-97Zm600-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
+          label(for="file")
+          input#file(type="file", name="file")
+          script.
+            document.querySelector("#editCoverBtn")
+              .addEventListener('click', e => {
+                document.getElementById('file').click();
+              });
+        if fileError
+          span.error= fileError.msg
+        input(type="hidden", name="imgUrl", value=message.coverImgUrl)
+      else
+        .formControl
+          label(for="file")= 'Cover image:'
+          input#file(type="file", name="file")
+          if fileError
+            span.error= fileError.msg
 
-    - const isCoverImgPresent = message && message.coverImgUrl.includes("cloudinary")
-    if isCoverImgPresent
-      img(src=message.coverImgUrl, alt=message.title)
-      input(type="hidden", name="imgUrl", value=message.coverImgUrl)
-    .formControl
-      label(for="file")= isCoverImgPresent ? 'Update cover image:' : 'Cover image:'
-      input#file(type="file", name="file")
-      if fileError
-        span.error= fileError.msg
+      .formControl
+        label(for="tags") Tags:
+        input#tags(type="text", name="tags", placeholder="nodejs, express, ...", value!=message ? message.tags.join(", ") : '')
 
-    .formControl
-      label(for="tags") Tags:
-      input#tags(type="text", name="tags", placeholder="nodejs, express, ...", value!=message ? message.tags.join(", ") : '')
-      //- todo: make it work like GitHub tags
-
-    button(type="submit") Submit
+      button.filled(type="submit") Submit
+      .guidelines
+        span.guideline Inputs marked with * are required.
+        span.guideline Select a cover image with landscape orientation for best results.

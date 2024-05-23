@@ -135,6 +135,90 @@ nav {
   .noMessages {
     text-align: center;
   }
+
+  &.compose {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .formControl {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    label {
+      display: block;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px 15px;
+      resize: vertical;
+      border: none;
+      border-bottom: 1px solid var(--primary);
+      background-color: var(--surface-container);
+      border-top-right-radius: 5px;
+      border-top-left-radius: 5px;
+      color: inherit;
+
+      &:focus,
+      &:active {
+        outline: 2px solid var(--outline);
+      }
+    }
+  }
+
+  .imageContainer {
+    position: relative;
+
+    img {
+      border-radius: 12px;
+      height: 100px;
+      width: 100%;
+      object-fit: cover;
+      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+        rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    }
+
+    button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+        rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    }
+
+    label,
+    input {
+      display: none;
+    }
+  }
+
+  .error {
+    color: var(--error);
+    font-size: 14px;
+    display: block;
+  }
+
+  .guidelines {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+    span {
+      display: block;
+    }
+  }
 }
 
 .messagesContainer {
@@ -418,6 +502,10 @@ nav {
         h1 {
           display: none;
         }
+      }
+
+      &.compose {
+        min-height: calc(100vh - 48px);
       }
     }
   }
