@@ -14,3 +14,6 @@ block content
             li: +messageCardBasic(message)
     else
       p.noMessages There are no messages right now.
+    
+    if user.isClubMember && messages.length
+      +messageDeleteDialog

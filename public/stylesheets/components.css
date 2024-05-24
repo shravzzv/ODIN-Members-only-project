@@ -248,3 +248,74 @@ button {
     }
   }
 }
+
+dialog[open] {
+  border-radius: 28px;
+  min-width: 280px;
+  max-width: 560px;
+  padding: 24px;
+  background-color: var(--surface-container-high);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  z-index: 1;
+  box-shadow: var(--elevation-level-3);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
+
+  .icon {
+    margin-bottom: 16px;
+    fill: var(--secondary);
+  }
+
+  .headline {
+    margin-bottom: 16px;
+    color: var(--on-surface);
+    line-height: 32px;
+    font-size: 24px;
+    font-weight: 400;
+  }
+
+  .supportingText {
+    margin-bottom: 24px;
+    color: var(--on-surface-variant);
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  &::backdrop {
+    backdrop-filter: blur(15px);
+  }
+}
+
+html:has(dialog[open]) {
+  *:not(dialog, dialog *) {
+    pointer-events: none;
+  }
+
+  dialog {
+    pointer-events: all;
+  }
+
+  body {
+    /* When the modal is shown, we want a fixed body to prevent bg scrolling. */
+    position: fixed;
+    overflow: hidden;
+  }
+}

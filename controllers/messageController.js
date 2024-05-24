@@ -96,14 +96,6 @@ exports.composePost = [
   }),
 ]
 
-// Display delete message form on GET.
-exports.messageDeleteGet = asyncHandler(async (req, res) => {
-  const message = await Message.findById(req.params.id)
-  if (!message) return res.redirect('/dashboard')
-
-  res.render('dashboard/messageDelete', { message })
-})
-
 // Handle message delete on POST.
 exports.messageDeletePost = asyncHandler(async (req, res) => {
   await Message.findByIdAndDelete(req.body.messageId)

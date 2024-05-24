@@ -20,9 +20,6 @@ router.post('/compose', messageController.composePost)
 
 // * dashboard/messages routes
 
-// GET request to delete a Message.
-router.get('/message/:id/delete', messageController.messageDeleteGet)
-
 // POST request to delete a Message.
 router.post('/message/:id/delete', messageController.messageDeletePost)
 
