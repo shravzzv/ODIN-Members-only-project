@@ -8,8 +8,8 @@ block content
     if messages.length
       ol.messagesContainer 
         for message in messages
-          if isClubMember
-            li: +messageCardPremium(message)
+          if user.isClubMember
+            li: +messageCardPremium(message, false)
           else 
             li: +messageCardBasic(message)
     else

@@ -217,10 +217,13 @@ exports.userLogoutPost = asyncHandler(async (req, res, next) => {
 
 // Display the authenticated user profile on GET.
 exports.profile = asyncHandler(async (req, res) => {
-  const messages = await Message.find({ user: req.user.id })
+  const messages = await Message.find({ user: req.user.id }).populate(
+    'user',
+    '_id'
+  )
 
   res.render('dashboard/profile', {
-    title: 'Profile',
+    title: req.user.fullName,
     user: req.user,
     messages,
   })

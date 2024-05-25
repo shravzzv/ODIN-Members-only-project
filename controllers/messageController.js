@@ -21,10 +21,9 @@ exports.index = asyncHandler(async (req, res) => {
   }
 
   res.render('dashboard/index', {
-    title: 'Dashboard',
     messages,
-    isClubMember: req.user.isClubMember,
     user: req.user,
+    title: 'Dashboard',
   })
 })
 
@@ -99,7 +98,7 @@ exports.composePost = [
 // Handle message delete on POST.
 exports.messageDeletePost = asyncHandler(async (req, res) => {
   await Message.findByIdAndDelete(req.body.messageId)
-  res.redirect('/dashboard')
+  res.redirect(req.body.redirectUri)
 })
 
 // Display update message form on GET.
