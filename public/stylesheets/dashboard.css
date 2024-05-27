@@ -137,7 +137,8 @@ nav {
     text-align: center;
   }
 
-  &.compose {
+  &.compose,
+  &.updateProfile {
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -367,6 +368,10 @@ form {
       object-fit: cover;
       box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
         rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+
+      .profileUpdate & {
+        height: 250px;
+      }
     }
 
     button {
@@ -681,7 +686,8 @@ form {
 
       &.compose,
       &.club,
-      &.search {
+      &.search,
+      &.updateProfile {
         min-height: calc(100vh - 48px);
       }
 

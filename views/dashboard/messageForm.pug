@@ -5,6 +5,7 @@ block content
     - const titleError = errors && errors.find(item => item.path === 'title')
     - const messageError = errors && errors.find(item => item.path === 'message')
     - const fileError = errors && errors.find(item => item.path === 'file')
+    - const isCoverImgPresent = message && message.coverImgUrl.includes("cloudinary")
 
     form(action="", method="post", enctype = "multipart/form-data")
       .formControl
@@ -19,7 +20,6 @@ block content
         if messageError
           span.error= messageError.msg
 
-      - const isCoverImgPresent = message && message.coverImgUrl.includes("cloudinary")
       if isCoverImgPresent
         .formControl
           label(for="file") Cover image:
@@ -38,7 +38,7 @@ block content
           input(type="hidden", name="imgUrl", value=message.coverImgUrl)
       else
         .formControl
-          label(for="file")= 'Cover image:'
+          label(for="file") Cover image:
           input#file(type="file", name="file")
           if fileError
             span.error= fileError.msg
@@ -48,6 +48,7 @@ block content
         input#tags(type="text", name="tags", placeholder="nodejs, express, ...", value!=message ? message.tags.join(", ") : '')
 
       button.filled(type="submit") Submit
+      
       .guidelines
         span.guideline Inputs marked with * are required.
         span.guideline Select a cover image with landscape orientation for best results.

@@ -1,49 +1,77 @@
 extends layout
 
 block content
-  h1 Update profile
+  - const firstNameError = errors && errors.find(item => item.path === 'firstName')
+  - const lastNameError = errors && errors.find(item => item.path === 'lastName')
+  - const emailError = errors && errors.find(item => item.path === 'email')
+  - const usernameError = errors && errors.find(item => item.path === 'username')
+  - const dobError = errors && errors.find(item => item.path === 'dateOfBirth')
+  - const fileError = errors && errors.find(item => item.path === 'file')
 
-  form(action="", method="post", enctype = "multipart/form-data")
+  - const isProfilePicPresent = user && user.profilePicUrl.includes("cloudinary")
 
-    .formControl 
-      label(for="firstName") First name*:
-      input#firstName(type="text", name="firstName", placeholder="John", value=(user ? user.firstName : ''), required, minlength="3", maxlength="20" )
+  main.pane.compose.profileUpdate
+    form(action="", method="post", enctype = "multipart/form-data")
 
-    .formControl 
-      label(for="lastName") Last name*:
-      input#lastName(type="text", name="lastName", placeholder="Doe", value=(user ? user.lastName : ''), required, minlength="3", maxlength="20")
+      .formControl 
+        label(for="firstName") First name*:
+        input#firstName(type="text", name="firstName", placeholder="John", value=(user ? user.firstName : ''))
+        if firstNameError
+          span.error= firstNameError.msg
 
-    .formControl 
-      label(for="email") Email*: 
-      input#email(type="email", name="email", placeholder="johndoe@mail.com", value=(user ? user.email : ''), required, autocomplete="on")
-      - const emailError = errors && errors.find(item => item.path === 'email')
-      if emailError
-        span.error= emailError.msg
+      .formControl 
+        label(for="lastName") Last name*:
+        input#lastName(type="text", name="lastName", placeholder="Doe", value=(user ? user.lastName : ''))
+        if lastNameError
+          span.error= lastNameError.msg
 
-    .formControl
-      label(for="username") Username*:
-      input#username(type="text", name="username", placeholder="johnnyD", value=(user ? user.username : ''), required, minlength="3", maxlength="20", autocomplete="on")
-      - const usernameError = errors && errors.find(item => item.path === 'username')
-      if usernameError
-        span.error= usernameError.msg
+      .formControl 
+        label(for="email") Email*: 
+        input#email(type="email", name="email", placeholder="johndoe@mail.com", value=(user ? user.email : ''), autocomplete="on")
+        if emailError
+          span.error= emailError.msg
 
-    .formControl
-      label(for="dateOfBirth") Date of Birth:
-      input#dateOfBirth(type="date", name="dateOfBirth", value=(user ? (user.dateOfBirth ? user.dobForInput : null) : null))
+      .formControl
+        label(for="username") Username*:
+        input#username(type="text", name="username", placeholder="johnnyD", value=(user ? user.username : ''), autocomplete="on")
+        if usernameError
+          span.error= usernameError.msg
 
-    - const isProfilePicPresent = user && user.profilePicUrl.includes("cloudinary")
-    if isProfilePicPresent
-      img(src=user.profilePicUrl, alt=user.username)
-      input(type="hidden", name="imgUrl", value=user.profilePicUrl)
-    .formControl
-      label(for="profilePicUrl")= isProfilePicPresent ? 'Update profile picture:' : 'Profile picture:'
-      input#profilePicUrl(type="file", name="file", accept='image/*')
-      - const fileError = errors && errors.find(item => item.path === 'file')
-      if fileError
-        span.error= fileError.msg
-    
-    .formControl
-      label(for="bio") Bio:
-      textarea#bio(name="bio", cols="30", rows="10", placeholder="Tell us something about you...", maxlength="255")=(user ? user.bio : '')
+      .formControl
+        label(for="dateOfBirth") Date of Birth:
+        input#dateOfBirth(type="date", name="dateOfBirth", value=(user ? (user.dateOfBirth ? user.dobForInput : null) : null))
+        if dobError
+          span.error= dobError.msg
 
-    button(type="submit") Submit
+      if isProfilePicPresent
+        .formControl
+          label(for="file") Profile picture:
+          .imageContainer
+            img(src=user.profilePicUrl, alt=user.username)
+            button#editProfilePicBtn.icon(type="button")
+              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M200-200h57l391-391-57-57-391 391v57Zm-40 80q-17 0-28.5-11.5T120-160v-97q0-16 6-30.5t17-25.5l505-504q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L313-143q-11 11-25.5 17t-30.5 6h-97Zm600-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
+            input#file(type="file", name="file")
+            script.
+              document.querySelector("#editProfilePicBtn")
+                .addEventListener('click', e => {
+                  document.getElementById('file').click();
+                });
+          if fileError
+            span.error= fileError.msg
+          input(type="hidden", name="imgUrl", value=user.profilePicUrl)
+      else 
+        .formControl
+          label(for="file") Profile picture:
+          input#file(type="file", name="file")
+          if fileError
+            span.error= fileError.msg
+      
+      .formControl
+        label(for="bio") Bio:
+        textarea#bio(name="bio", cols="30", rows="5", placeholder="Tell us something about you...", maxlength="255")=(user ? user.bio : '')
+
+      button.filled(type="submit") Submit
+
+      .guidelines
+        span.guideline Inputs marked with * are required.
+        span.guideline Select a profile picture with potrait orientation for best results.
