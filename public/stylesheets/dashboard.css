@@ -326,6 +326,10 @@ nav {
   &.deleteProfile {
     padding-top: 24px;
 
+    h1 {
+      color: var(--primary);
+    }
+
     &:has(#deleteProfile) {
       display: flex;
       flex-direction: column;
@@ -343,6 +347,23 @@ nav {
   &.updatePassword {
     a {
       color: var(--primary);
+    }
+  }
+
+  &.forgotPassword,
+  &.updatePassword {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    h1,
+    strong {
+      color: var(--primary);
+    }
+
+    [type='submit'] {
+      margin-top: 10px;
     }
   }
 }
