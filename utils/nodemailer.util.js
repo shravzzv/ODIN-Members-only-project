@@ -9,11 +9,29 @@ const transporter = nodemailer.createTransport({
 })
 
 exports.sendMail = (receiver, secret) => {
+  const htmlContent = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <style>
+        h2 { color: #333; }
+        p { font-size: 14px; }
+        strong { font-weight: bold; }
+      </style>
+    </head>
+    <body>
+      <h2>Reset your password</h2>
+      <p>The secret to change your password is: <strong>${secret}</strong>.</p>
+      <p>Copy and paste the 6 characters as they are. Don't share this with anyone.</p>
+    </body>
+  </html>
+`
+
   const mailOptions = {
     from: process.env.NODEMAILER_EMAIL,
     to: receiver,
     subject: 'Reset your password',
-    text: `The secret to change your password is : "${secret}". Copy and paste the entire string between "" excluding the "".`,
+    html: htmlContent,
   }
 
   transporter.sendMail(mailOptions, (error, info) => {

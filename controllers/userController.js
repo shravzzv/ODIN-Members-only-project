@@ -13,7 +13,6 @@ const nodemailerUtils = require('../utils/nodemailer.util')
 const handleImage = require('../middlewares/handleImage.middleware')
 const bcrypt = require('bcryptjs')
 const passport = require('passport')
-const { v4: uuidv4 } = require('uuid')
 
 // The landing page home.
 exports.index = (req, res) => {
@@ -537,7 +536,19 @@ exports.passwordUpdatePost = [
 
 // Display password forgot form on GET.
 exports.passwordForgotGet = asyncHandler(async (req, res) => {
-  passport.session.passwordSecret = uuidv4()
+  const generateSecret = () => {
+    // Generate a random alphanumeric string
+    const otpLength = 6
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789'
+    let otp = ''
+    for (let i = 0; i < otpLength; i++) {
+      otp += characters.charAt(Math.floor(Math.random() * characters.length))
+    }
+    return otp
+  }
+
+  passport.session.passwordSecret = generateSecret()
   await nodemailerUtils.sendMail(
     req.user.email,
     passport.session.passwordSecret
