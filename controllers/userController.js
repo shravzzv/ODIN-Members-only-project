@@ -612,15 +612,10 @@ exports.searchGet = [
 
   asyncHandler(async (req, res) => {
     if (req.query.tag) {
-      const messages = await Message.aggregate().search({
-        index: process.env.MONGO_ATLAS_SEARCH_INDEX,
-        text: {
-          query: req.query.tag,
-          path: {
-            wildcard: '*',
-          },
-        },
-      })
+      const messages = await Message.find({ tags: req.query.tag }).populate(
+        'user',
+        'username profilePicUrl'
+      )
 
       return res.render('dashboard/search', {
         messages,
@@ -659,8 +654,18 @@ exports.searchPost = [
         },
       })
 
+      // populate the user for each message
+      const populatedMessages = await Promise.all(
+        messages.map(async (message) => {
+          return await Message.findById(message._id).populate(
+            'user',
+            'username profilePicUrl'
+          )
+        })
+      )
+
       res.render('dashboard/search', {
-        messages,
+        messages: populatedMessages,
         user: req.user,
         searchQuery: sanitizedData.searchQuery,
       })

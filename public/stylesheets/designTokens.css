@@ -66,6 +66,9 @@
   --elevation-level-5: rgba(0, 0, 0, 0.2) 0px 7px 8px -4px,
     rgba(0, 0, 0, 0.14) 0px 12px 17px 2px, rgba(0, 0, 0, 0.12) 0px 5px 22px 4px;
 
+  /* shape */
+  --shape-corner-full: 40px;
+
   @media (prefers-color-scheme: dark) {
     --primary: rgb(177 209 138);
     --surface-tint: rgb(177 209 138);

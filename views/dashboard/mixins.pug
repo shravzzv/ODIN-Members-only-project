@@ -70,7 +70,7 @@ mixin messageDeleteDialog
         form.action = `/dashboard/message/${messageId}/delete`
 
         messageIdInput.value = messageId
-        redirectUriInput.value = window.location.pathname
+        redirectUriInput.value = window.location.href
 
         scrollTop = window.scrollY
         document.body.style.top = `-${scrollTop}px`;
@@ -89,12 +89,6 @@ mixin messageDeleteDialog
         });
       }
 
-      const handleSubmit = e => {
-        console.log('handle submit')
-      }
-
-      form.addEventListener('submit', handleSubmit)
-
       document.querySelectorAll('.delete')
         .forEach(btn => btn.addEventListener('click', showDialog))
 
@@ -104,4 +98,4 @@ mixin clubBenefits
   h2 Club benefits
   ol
     li See all of the messages metadata such as the cover image, title, author, tags, last update time of all the users.
-    li Search for messages.
+    li Search for messages using the message title, content and tags.
