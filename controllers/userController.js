@@ -226,6 +226,7 @@ exports.profile = asyncHandler(async (req, res) => {
     title: req.user.fullName,
     user: req.user,
     messages,
+    isProfile: true,
   })
 })
 
@@ -240,10 +241,11 @@ exports.userDetail = asyncHandler(async (req, res) => {
     Message.find({ user: req.params.id }),
   ])
 
-  res.render('dashboard/user', {
+  res.render('dashboard/profile', {
     title: `${user.username}'s profile`,
     user,
     messages,
+    isProfile: false,
   })
 })
 
