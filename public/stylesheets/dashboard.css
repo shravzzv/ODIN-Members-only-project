@@ -138,7 +138,8 @@ nav {
   }
 
   &.compose,
-  &.updateProfile {
+  &.updateProfile,
+  &.updatePassword {
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -338,6 +339,12 @@ nav {
       }
     }
   }
+
+  &.updatePassword {
+    a {
+      color: var(--primary);
+    }
+  }
 }
 
 form {
@@ -373,6 +380,22 @@ form {
         outline: 2px solid var(--outline);
       }
     }
+
+    &:has(> [type='checkbox']) {
+      flex-direction: row;
+      margin-top: 10px;
+      margin-bottom: 10px;
+
+      label {
+        display: inline;
+      }
+
+      input {
+        display: inline;
+        width: 24px;
+        outline: none;
+      }
+    }
   }
 
   .imageContainer {
@@ -386,7 +409,7 @@ form {
       box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
         rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 
-      .profileUpdate & {
+      .updateProfile & {
         height: 250px;
       }
     }
@@ -705,7 +728,8 @@ form {
       &.club,
       &.search,
       &.updateProfile,
-      &.deleteProfile {
+      &.deleteProfile,
+      &.updatePassword {
         min-height: calc(100vh - 48px);
       }
 
@@ -721,6 +745,10 @@ form {
         &:has(#deleteProfile) {
           min-height: calc(100vh - 48px);
         }
+      }
+
+      &.updatePassword {
+        align-items: center;
       }
     }
   }
