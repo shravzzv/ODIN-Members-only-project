@@ -1,23 +1,21 @@
 extends layout
 
 block content
-  h1 Delete your profile?
-  if messages && messages.length
-    p You have these messages in your profile. Please delete them first if you wish to delete your profile!
-    ol
-      for message in messages
-        li
-          p= message.title
-          a(href=message.url+'/delete')
-            button
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M280-120q-33 0-56.5-23.5T200-200v-520q-17 0-28.5-11.5T160-760q0-17 11.5-28.5T200-800h160q0-17 11.5-28.5T400-840h160q17 0 28.5 11.5T600-800h160q17 0 28.5 11.5T800-760q0 17-11.5 28.5T760-720v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM400-280q17 0 28.5-11.5T440-320v-280q0-17-11.5-28.5T400-640q-17 0-28.5 11.5T360-600v280q0 17 11.5 28.5T400-280Zm160 0q17 0 28.5-11.5T600-320v-280q0-17-11.5-28.5T560-640q-17 0-28.5 11.5T520-600v280q0 17 11.5 28.5T560-280ZM280-720v520-520Z"/></svg>
-              span delete
-  else
-    form(action="", method="post") 
-      .formControl
-        label(for="confirmation") Are you sure you want to delete your profile? Type #[em delete my profile] to delete your profile permanently.
-        input#confirmation(type="text", name="confirmation", placeholder="delete my profile", value=confirmation ? confirmation : '')
-        - const cnfrmError = errors && errors.find(item => item.path === 'confirmation')
-        if cnfrmError
-          span.error= cnfrmError.msg
-      button(type="submit") Submit
+  main.pane.deleteProfile
+    - const cnfrmError = errors && errors.find(item => item.path === 'confirmation')
+
+    if messages && messages.length
+      p You have these messages in your profile. Please delete them first if you wish to delete your profile!
+      ol.messagesContainer 
+        for message in messages
+          li: +messageCardPremium(message, true, false)
+      +messageDeleteDialog
+    else
+      form#deleteProfile(action="", method="post") 
+        .formControl
+          label(for="confirmation") Type #[strong delete my profile] to delete your profile permanently.
+          input#confirmation(type="text", name="confirmation", placeholder="delete my profile", value=confirmation ? confirmation : '')
+          if cnfrmError
+            span.error= cnfrmError.msg
+
+        button.filled(type="submit") Submit

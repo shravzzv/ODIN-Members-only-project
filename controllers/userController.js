@@ -298,10 +298,14 @@ exports.profileDeleteGet = asyncHandler(async (req, res) => {
   // * profile delete and user delete are handled on separate routes!
   // When any user enters /dashboard/profile/delete, only their account will be present in the req.user. They aren't accessing any other users profile.
 
-  const messages = await Message.find({ user: req.user.id })
+  const messages = await Message.find({ user: req.user.id }).populate(
+    'user',
+    '_id'
+  )
 
   res.render('dashboard/profileDelete', {
     title: 'Delete your profile',
+    user: req.user,
     messages,
   })
 })
