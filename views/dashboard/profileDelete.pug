@@ -12,7 +12,7 @@ block content
           li: +messageCardPremium(message, true, false)
       +messageDeleteDialog
     else
-      form#deleteProfile(action="", method="post") 
+      form#deleteProfileForm(action="", method="post") 
         .formControl
           label(for="confirmation") Type #[strong delete my profile] to delete your profile permanently.
           input#confirmation(type="text", name="confirmation", placeholder="delete my profile", value=confirmation ? confirmation : '')

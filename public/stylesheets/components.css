@@ -1,9 +1,223 @@
 /* Components are interactive building blocks for creating a user interface. All styles below emulate the material design 3 components. */
 
+nav {
+  z-index: 1;
+
+  .headline {
+    display: none;
+  }
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      a {
+        text-decoration: none;
+        color: inherit;
+        outline: none;
+
+        .iconContainer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 16px;
+          height: 32px;
+
+          svg {
+            width: 24px;
+            fill: var(--on-surface-variant);
+
+            &.outlined {
+              display: block;
+            }
+            &.filled {
+              display: none;
+            }
+          }
+        }
+
+        span {
+          font-weight: 500;
+          line-height: 16px;
+          font-size: 12px;
+          color: var(--on-surface-variant);
+        }
+
+        &.active {
+          /* in bar and rail, .iconContainer acts as the active indicator. */
+          /* in drawer, `a` acts as the active indicator. */
+          .iconContainer {
+            background-color: var(--secondary-container);
+
+            svg {
+              fill: var(--on-secondary-container);
+
+              &.filled {
+                display: block;
+              }
+              &.outlined {
+                display: none;
+              }
+            }
+          }
+
+          span {
+            font-weight: 700;
+            color: var(--on-surface);
+          }
+        }
+
+        &:is(:hover, :focus) {
+          .iconContainer {
+            background-color: var(--primary-container);
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 599px) {
+    /* a bottom navigation bar for compact */
+    background-color: var(--surface-container);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 12px 0 16px;
+    max-height: 80px;
+
+    ul {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+
+      li {
+        flex: 1;
+
+        a {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+
+          .iconContainer {
+            width: 64px;
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 600px) and (max-width: 839px) {
+    /* a left navigation rail for medium */
+    background-color: var(--surface-container);
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 80px;
+    height: 100vh;
+    padding: 12px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: flex; /* required for centering the ul vertically  */
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      margin: auto;
+
+      li {
+        a {
+          height: 56px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+
+          .iconContainer {
+            width: 56px;
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 840px) {
+    /* a standard navigation drawer for expanded, large and extra large */
+    background-color: var(--surface-container);
+    width: 360px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    padding: 24px 12px;
+
+    .headline {
+      display: block;
+      line-height: 20px;
+      font-size: 18px;
+      font-weight: 500;
+      padding: 16px;
+      margin: 0;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+
+    ul {
+      li {
+        a {
+          /* acts as the active indicator */
+          height: 56px;
+          width: 336px;
+          border-radius: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 12px;
+          padding: 0 16px;
+
+          .iconContainer {
+            height: 100%;
+          }
+
+          span {
+            font-size: 14px;
+            line-height: 20px;
+          }
+
+          &.active {
+            background-color: var(--secondary-container);
+
+            span {
+              color: var(--on-secondary-container);
+            }
+          }
+
+          &:is(:hover, :focus) {
+            background-color: var(--primary-container);
+          }
+        }
+      }
+    }
+  }
+}
+
 .card {
-  background-color: var(--surface-container);
   color: var(--on-surface);
-  border-radius: 12px;
+  background-color: var(--surface-container);
+  border-radius: var(--shape-corner-medium);
   cursor: pointer;
   transition: box-shadow 300ms ease;
 
@@ -18,27 +232,23 @@
 
   &.elevated {
     background-color: var(--surface-container-low);
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 1px -1px,
-      rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 0px 1px 3px 0px;
+    box-shadow: var(--elevation-level-1);
   }
 
   &.filled {
     background-color: var(--surface-container-highest);
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 0px,
-      rgba(0, 0, 0, 0.14) 0px 0px 0px 0px, rgba(0, 0, 0, 0.12) 0px 0px 0px 0px;
+    box-shadow: var(--elevation-level-0);
   }
 
   &.outlined {
     background-color: var(--surface);
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 0px,
-      rgba(0, 0, 0, 0.14) 0px 0px 0px 0px, rgba(0, 0, 0, 0.12) 0px 0px 0px 0px;
+    box-shadow: var(--elevation-level-0);
     outline: 1px solid var(--outline-variant);
   }
 
   &:hover,
   &:focus {
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px,
-      rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;
+    box-shadow: var(--elevation-level-2);
   }
 
   &:disabled {
@@ -48,10 +258,10 @@
 
 .chip {
   height: 32px;
-  border-radius: 8px;
   display: flex;
   align-items: center;
   padding: 0px 16px;
+  border-radius: var(--shape-corner-small);
   background-color: var(--surface-container-low);
   outline: 1px solid var(--outline);
   color: var(--on-surface-variant);
@@ -74,7 +284,7 @@
 button {
   font-size: 14px;
   height: 40px;
-  border-radius: 20px;
+  border-radius: var(--shape-corner-full);
   padding: 0 24px;
   display: flex;
   align-items: center;
@@ -112,7 +322,7 @@ button {
   &.elevated {
     background-color: var(--surface-container-low);
     color: var(--primary);
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 2px;
+    box-shadow: var(--elevation-level-1);
     transition: box-shadow 300ms ease;
 
     & svg {
@@ -124,7 +334,7 @@ button {
     }
 
     &:hover {
-      box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 6px;
+      box-shadow: var(--elevation-level-2);
     }
   }
 
@@ -155,7 +365,7 @@ button {
     }
 
     &:hover {
-      box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 2px;
+      box-shadow: var(--elevation-level-1);
     }
   }
 
@@ -190,7 +400,7 @@ button {
     padding: 0;
     width: 40px;
     height: 40px;
-    border-radius: 100%;
+    border-radius: var(--shape-corner-full);
     background-color: var(--surface-container);
 
     svg {
@@ -200,15 +410,14 @@ button {
   }
 
   &.fab {
-    background-color: var(--primary-container);
-    color: var(--on-primary-container);
     height: 56px;
     margin: 16px;
-    border-radius: 16px;
     font-weight: 500;
     width: max-content;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 5px -1px,
-      rgba(0, 0, 0, 0.14) 0px 6px 10px 0px, rgba(0, 0, 0, 0.12) 0px 1px 18px 0px;
+    color: var(--on-primary-container);
+    box-shadow: var(--elevation-level-3);
+    border-radius: var(--shape-corner-medium);
+    background-color: var(--primary-container);
 
     & svg {
       width: 24px;
@@ -216,9 +425,7 @@ button {
     }
 
     &:hover {
-      box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px,
-        rgba(0, 0, 0, 0.14) 0px 8px 10px 1px,
-        rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
+      box-shadow: var(--elevation-level-4);
     }
   }
 
@@ -250,18 +457,18 @@ button {
 }
 
 dialog[open] {
-  border-radius: 28px;
   min-width: 280px;
   max-width: 560px;
   padding: 24px;
+  border-radius: var(--shape-corner-extra-large);
   background-color: var(--surface-container-high);
+  box-shadow: var(--elevation-level-3);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border: none;
   z-index: 1;
-  box-shadow: var(--elevation-level-3);
   position: fixed;
   top: 50%;
   left: 50%;

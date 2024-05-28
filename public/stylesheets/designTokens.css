@@ -67,6 +67,12 @@
     rgba(0, 0, 0, 0.14) 0px 12px 17px 2px, rgba(0, 0, 0, 0.12) 0px 5px 22px 4px;
 
   /* shape */
+  --shape-corner-none: 0;
+  --shape-corner-extra-small: 4px;
+  --shape-corner-small: 8px;
+  --shape-corner-medium: 16px;
+  --shape-corner-large: 20px;
+  --shape-corner-extra-large: 28px;
   --shape-corner-full: 40px;
 
   @media (prefers-color-scheme: dark) {
