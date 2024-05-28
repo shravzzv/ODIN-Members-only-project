@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  main.pane.deleteProfile
+    - const cnfrmError = errors && errors.find(item => item.path === 'confirmation')
+    h1 Delete your profile
+
+    if messages && messages.length
+      p You have these messages in your profile. Please delete them first if you wish to delete your profile!
+      ol.messagesContainer 
+        for message in messages
+          li: +messageCardPremium(message, true, false)
+      +messageDeleteDialog
+    else
+      form#deleteProfileForm(action="", method="post") 
+        .formControl
+          label(for="confirmation") Type #[strong delete my profile] to delete your profile permanently.
+          input#confirmation(type="text", name="confirmation", placeholder="delete my profile", value=confirmation ? confirmation : '')
+          if cnfrmError
+            span.error= cnfrmError.msg
+
+        button.filled(type="submit") Submit

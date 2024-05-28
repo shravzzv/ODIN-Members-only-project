@@ -1,0 +1,60 @@
+extends layout
+
+block content
+  h1 Sign Up
+
+  form(action="", method="post", enctype = "multipart/form-data")
+
+    .formControl 
+      label(for="firstName") First name*:
+      input#firstName(type="text", name="firstName", placeholder="John", value=(user ? user.firstName : ''), required, minlength="3", maxlength="20" )
+
+    .formControl 
+      label(for="lastName") Last name*:
+      input#lastName(type="text", name="lastName", placeholder="Doe", value=(user ? user.lastName : ''), required, minlength="3", maxlength="20")
+
+    .formControl 
+      label(for="email") Email*: 
+      input#email(type="email", name="email", placeholder="johndoe@mail.com", value=(user ? user.email : ''), required, autocomplete="on")
+      - const emailError = errors && errors.find(item => item.path === 'email')
+      if emailError
+        span.error= emailError.msg
+
+    .formControl
+      label(for="username") Username*:
+      input#username(type="text", name="username", placeholder="johnnyD", value=(user ? user.username : ''), required, minlength="3", maxlength="20", autocomplete="on")
+      - const usernameError = errors && errors.find(item => item.path === 'username')
+      if usernameError
+        span.error= usernameError.msg
+
+    .formControl
+      label(for="password") Password*:
+      input#password(type="password", name="password", value=(user ? user.password : ''), required, minlength="8")
+
+    .formControl
+      label(for="passwordConfirm") Confirm Password*:
+      input#passwordConfirm(type="password", name="passwordConfirm", value=(user ? user.passwordConfirm : ''), required, minlength="8")
+      - const pwdConfirmError = errors && errors.find(item => item.path === 'passwordConfirm')
+      if pwdConfirmError
+        span.error= pwdConfirmError.msg
+
+    .formControl
+      label(for="dateOfBirth") Date of Birth:
+      input#dateOfBirth(type="date", name="dateOfBirth", value=(user ? (user.dateOfBirth ? user.dobForInput : null) : null))
+
+    - const isProfilePicPresent = user && user.profilePicUrl.includes("cloudinary")
+    if isProfilePicPresent
+      img(src=user.profilePicUrl, alt=user.username)
+      input(type="hidden", name="imgUrl", value=user.profilePicUrl)
+    .formControl
+      label(for="profilePicUrl")= isProfilePicPresent ? 'Update profile picture:' : 'Profile picture:'
+      input#profilePicUrl(type="file", name="file", accept='image/*')
+      - const fileError = errors && errors.find(item => item.path === 'file')
+      if fileError
+        span.error= fileError.msg
+    
+    .formControl
+      label(for="bio") Bio:
+      textarea#bio(name="bio", cols="30", rows="10", placeholder="Tell us something about you...", maxlength="255")=(user ? user.bio : '')
+
+    button(type="submit") Submit

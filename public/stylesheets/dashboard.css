@@ -1,0 +1,560 @@
+@import url(./designTokens.css);
+@import url(./components.css);
+@import url(./animations.css);
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* only styles common to all the window size classes go here */
+
+body {
+  background-color: var(--surface);
+  color: var(--on-surface);
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 40px;
+    border: none;
+    background-color: var(--secondary);
+  }
+}
+
+svg {
+  fill: var(--on-surface);
+}
+
+img {
+  max-width: 100%;
+
+  @media (prefers-color-scheme: dark) {
+    filter: brightness(0.8) contrast(1.2);
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .formControl {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    label {
+      display: block;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px 15px;
+      resize: vertical;
+      border: none;
+      border-bottom: 1px solid var(--primary);
+      background-color: var(--surface-container);
+      border-top-right-radius: 5px;
+      border-top-left-radius: 5px;
+      color: inherit;
+
+      &:focus,
+      &:active {
+        outline: 2px solid var(--outline);
+      }
+    }
+
+    &:has(> [type='checkbox']) {
+      flex-direction: row;
+      margin-top: 10px;
+      margin-bottom: 10px;
+
+      label {
+        display: inline;
+      }
+
+      input {
+        display: inline;
+        width: 24px;
+        outline: none;
+      }
+    }
+  }
+
+  .imageContainer {
+    position: relative;
+
+    img {
+      border-radius: 12px;
+      height: 100px;
+      width: 100%;
+      object-fit: cover;
+      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+        rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+
+      .updateProfile & {
+        height: 250px;
+      }
+    }
+
+    button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+        rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    }
+
+    label,
+    input {
+      display: none;
+    }
+  }
+
+  .error {
+    color: var(--error);
+    font-size: 14px;
+    display: block;
+  }
+
+  .guidelines {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+    span {
+      display: block;
+    }
+  }
+
+  &:has(.searchBar) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 10px;
+    left: auto;
+    z-index: 1;
+
+    .searchBar {
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      background-color: var(--surface-container-high);
+      min-width: 260px;
+      max-width: 720px;
+      height: 56px;
+      padding: 0 16px;
+      padding-right: 0;
+      gap: 8px;
+      border-radius: var(--shape-corner-full);
+      box-shadow: var(--elevation-level-2);
+
+      label,
+      input {
+        display: inline;
+        width: max-content;
+      }
+
+      label {
+        svg {
+          fill: var(--on-surface);
+        }
+      }
+
+      input {
+        border: none;
+        background-color: inherit;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+
+        &::placeholder {
+          color: var(--on-surface-variant);
+          font-weight: 400;
+        }
+      }
+    }
+
+    .guidelines {
+      text-align: center;
+
+      body:has(.messageCard) & {
+        /* hide when results are being shown */
+        display: none;
+      }
+    }
+  }
+}
+
+.pane {
+  background-color: var(--surface);
+  width: 100%;
+  padding: 24px;
+
+  .appBar {
+    h1 {
+      display: block;
+      text-align: center;
+      line-height: 20px;
+      font-size: 22px;
+      font-weight: 500;
+      padding: 16px;
+      color: var(--primary);
+      text-transform: uppercase;
+      margin-top: 0;
+      padding: 0;
+    }
+  }
+
+  .noMessages {
+    text-align: center;
+  }
+
+  &.compose,
+  &.updateProfile,
+  &.updatePassword {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  &.profile {
+    .details {
+      .profilePicContainer {
+        margin: 0 auto;
+        border-radius: 50%;
+        aspect-ratio: 1;
+        box-shadow: var(--elevation-level-2);
+        max-height: 150px;
+        position: relative;
+        flex-shrink: 0;
+
+        img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: inherit;
+          object-fit: cover;
+        }
+      }
+
+      .fullname {
+        font-size: 20px;
+        font-weight: normal;
+        margin-bottom: 5px;
+        text-align: center;
+      }
+
+      .username {
+        color: var(--primary);
+        margin: 5px;
+        font-weight: 500;
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-items: center;
+      justify-content: space-evenly;
+
+      a {
+        text-decoration: none;
+      }
+    }
+
+    .messages {
+      h2 {
+        font-size: 18px;
+        font-weight: 500;
+        margin-top: 40px;
+        color: var(--primary);
+      }
+    }
+  }
+
+  &.club {
+    h1,
+    h2 {
+      color: var(--primary);
+      text-align: center;
+    }
+
+    form {
+      max-width: 370px;
+    }
+
+    ol {
+      margin: 0;
+      padding: 0 24px;
+      max-width: 370px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+  }
+
+  &.search {
+    &:not(:has(form)) {
+      text-align: center;
+
+      a {
+        text-decoration: none;
+      }
+
+      button {
+        margin: 0 auto;
+      }
+    }
+
+    .error {
+      text-align: center;
+    }
+  }
+
+  &.deleteProfile {
+    h1 {
+      color: var(--primary);
+    }
+
+    &:has(#deleteProfileForm) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      form {
+        max-width: 360px;
+      }
+    }
+  }
+
+  &.forgotPassword,
+  &.updatePassword {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    a {
+      color: var(--primary);
+    }
+
+    h1,
+    strong {
+      color: var(--primary);
+    }
+
+    [type='submit'] {
+      margin-top: 10px;
+    }
+  }
+}
+
+.messagesContainer {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  /* grid item with flexible width but a minimum of 250 pixels. */
+  grid-gap: 8px;
+
+  .messageCard {
+    position: relative;
+    cursor: inherit;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .coverImageContainer {
+      border-radius: inherit;
+      img {
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+        height: 100px;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .content {
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+
+      .title {
+        font-weight: 500;
+        color: var(--primary);
+
+        &:not(:has(+ .userProfile)) {
+          margin-bottom: 0;
+        }
+      }
+
+      .userProfile {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        img,
+        svg {
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          object-fit: cover;
+          fill: var(--on-surface);
+        }
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .time {
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        svg {
+          fill: var(--on-surface-variant);
+          width: 20px;
+        }
+      }
+
+      .buttons {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        button {
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+            rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+          span {
+            display: none;
+          }
+        }
+      }
+    }
+
+    &.messageCardBasic {
+      padding: 8px 16px;
+    }
+  }
+}
+
+::selection {
+  background-color: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+/* compact window class */
+@media (max-width: 599px) {
+  body {
+    margin-bottom: calc(80px); /* offset the fixed navbar */
+
+    .pane {
+      padding: 16px;
+    }
+  }
+}
+
+/* medium window size class */
+@media (min-width: 600px) and (max-width: 839px) {
+  body {
+    margin-left: calc(80px); /* to offset the fixed navigation rail */
+  }
+}
+
+/* styles similar for expanded, large and extra large window size classes  */
+@media (min-width: 840px) {
+  body {
+    margin-left: calc(360px); /* to offset the fixed navigation drawer */
+    padding: 24px 24px 24px 0;
+    background-color: var(--surface-container);
+
+    .pane {
+      border-radius: 16px;
+      min-height: calc(100vh - 48px);
+
+      .appBar {
+        h1 {
+          display: none;
+        }
+      }
+
+      &.club {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      &.search {
+        form {
+          .formControl {
+            min-width: 360px;
+          }
+        }
+      }
+
+      &.forgotPassword {
+        p {
+          max-width: 360px;
+        }
+      }
+    }
+  }
+}
+
+/* expanded window size class */
+@media (min-width: 840px) and (max-width: 1199px) {
+}
+
+/* large window size class */
+@media (min-width: 1200px) and (max-width: 1599px) {
+}
+
+/* extra large window size class */
+@media (min-width: 1600px) {
+}

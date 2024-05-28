@@ -3,14 +3,21 @@ const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
+const passport = require('passport')
+const session = require('express-session')
+const LocalStrategy = require('passport-local').Strategy
+const bcrypt = require('bcryptjs')
+const mongoose = require('mongoose')
+const MongoStore = require('connect-mongo')
 require('dotenv').config()
 
+require('./config/db.config')
+require('./config/cloudinary.config')
+const User = require('./models/user')
 const indexRouter = require('./routes/index')
-const usersRouter = require('./routes/users')
-const connectDB = require('./config/db.config')
+const dashboardRouter = require('./routes/dashboard')
 
 const app = express()
-connectDB()
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -22,8 +29,57 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
+// set up authentication middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ client: mongoose.connection.getClient() }),
+  })
+)
+app.use(passport.session())
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      const user = await User.findOne({ username }, '_id password')
+      if (!user)
+        return done(null, false, {
+          message: `User with username "${username}" doesn't exist.`,
+        })
+
+      const match = await bcrypt.compare(password, user.password)
+      if (!match)
+        return done(null, false, {
+          path: 'password',
+          msg: `Incorrect password.`,
+        })
+      // errors are sent this way to match express-validator error structure
+
+      return done(null, user)
+    } catch (error) {
+      return done(error)
+    }
+  })
+)
+passport.serializeUser((user, done) => {
+  try {
+    return done(null, user.id)
+  } catch (error) {
+    return done(error)
+  }
+})
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id)
+    return done(null, user)
+  } catch (error) {
+    return done(error)
+  }
+})
+
 app.use('/', indexRouter)
-app.use('/users', usersRouter)
+app.use('/dashboard', dashboardRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

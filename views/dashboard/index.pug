@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  main.pane
+    .appBar
+      h1 Clubcord
+
+    if messages.length
+      ol.messagesContainer 
+        for message in messages
+          if user.isClubMember
+            li: +messageCardPremium(message, false)
+          else 
+            li: +messageCardBasic(message)
+    else
+      p.noMessages There are no messages right now.
+    
+    if user.isClubMember && messages.length
+      +messageDeleteDialog

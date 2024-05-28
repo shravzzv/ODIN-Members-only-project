@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  h1 Sign In
+
+  form(action="", method="post")
+
+    .formControl 
+      label(for="username") Username: 
+      input#username(type="text", name="username", placeholder="johndoe", value=username || '', , required, minlength="3", maxlength="20", autocomplete="on")
+      - const usernameError = errors && errors.find(item => item.path === 'username')
+      if usernameError
+        span.error= usernameError.msg
+
+    .formControl
+      label(for="password") Password:
+      input#password(type="password", name="password", value=password || '', required, minlength="8")
+      - const pwdError = errors && errors.find(item => item.path === 'password')
+      if pwdError
+        span.error= pwdError.msg
+
+    button(type="submit") Submit
