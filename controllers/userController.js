@@ -702,22 +702,26 @@ exports.searchPost = [
 
 // Display user delete form on GET.
 exports.userDeleteGet = (req, res) => {
-  res.send('UserDeleteGet not implemented.')
+  res.redirect(`/dashboard/user/${req.params.id}`)
+  // res.send('UserDeleteGet not implemented.')
 }
 
 // Handle user delete on POST.
 exports.userDeletePost = (req, res) => {
-  res.send('UserDeletePost not implemented.')
+  res.redirect(`/dashboard/user/${req.params.id}`)
+  // res.send('UserDeletePost not implemented.')
 }
 
 // Display user update form on GET.
 exports.userUpdateGet = (req, res) => {
-  res.send('UserUpdateGet not implemented.')
+  res.redirect(`/dashboard/user/${req.params.id}`)
+  // res.send('UserUpdateGet not implemented.')
 }
 
 // Handle user update on POST.
 exports.userUpdatePost = (req, res) => {
-  res.send('UserUpdatePost not implemented.')
+  res.redirect(`/dashboard/user/${req.params.id}`)
+  // res.send('UserUpdatePost not implemented.')
 }
 
 // Get a list of all users.
