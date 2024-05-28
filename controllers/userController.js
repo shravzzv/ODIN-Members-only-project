@@ -280,6 +280,7 @@ exports.clubJoinPost = [
         title: 'Joining club error',
         user: req.user,
         errors: errors.array(),
+        secret: req.body.secret,
       })
     }
   }),

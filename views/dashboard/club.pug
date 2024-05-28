@@ -7,7 +7,7 @@ block content
       form(action="/dashboard/club/join", method="post") 
         .formControl
           label(for="secret") Club secret:  
-          input#secret(type="text", name="secret", placeholder="do you know the secret code?")
+          input#secret(type="text", name="secret", placeholder="do you know the secret code?", value=secret ? secret : '')
           - const secretError = errors && errors.find(item => item.path === 'secret')
           if secretError
             span.error= secretError.msg
