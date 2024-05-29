@@ -24,6 +24,10 @@ svg {
   fill: var(--on-surface);
 }
 
+a {
+  color: var(--primary);
+}
+
 nav {
   position: fixed;
   z-index: 1;
@@ -212,6 +216,14 @@ main:not(:has(.hero)) {
       width: 100%;
       display: block;
     }
+  }
+
+  p {
+    text-align: center;
+  }
+
+  strong.email {
+    color: var(--primary);
   }
 }
 
