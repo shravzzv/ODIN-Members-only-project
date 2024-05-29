@@ -476,7 +476,7 @@ exports.passwordUpdatePost = [
   body('currentPassword')
     .trim()
     .isLength({ min: 8 })
-    .withMessage('Current password must be atleast 8 characters long.')
+    .withMessage('Must be atleast 8 characters long.')
     .bail()
     .custom(async (password, { req }) => {
       // check if the current password is correct
@@ -488,7 +488,7 @@ exports.passwordUpdatePost = [
   body('newPassword')
     .trim()
     .isLength({ min: 8 })
-    .withMessage('New password must be atleast 8 characters long.')
+    .withMessage('Must be atleast 8 characters long.')
     .bail()
     .custom((newPassword, { req }) => {
       if (req.passwordMatch && newPassword === req.body.currentPassword)
@@ -499,7 +499,7 @@ exports.passwordUpdatePost = [
   body('passwordConfirm')
     .trim()
     .isLength({ min: 8 })
-    .withMessage('Confirm new password must be atleast 8 characters long.')
+    .withMessage('Must be atleast 8 characters long.')
     .bail()
     .custom((value, { req }) => {
       if (value !== req.body.newPassword)
@@ -529,109 +529,6 @@ exports.passwordUpdatePost = [
         title: 'Update password error',
         errors: errors.array(),
         currentPassword,
-        newPassword,
-        passwordConfirm,
-      })
-    }
-  }),
-]
-
-// * Handle forgot password on the dashboard
-
-// Display password forgot form on GET.
-exports.passwordForgotGet = asyncHandler(async (req, res) => {
-  const generateSecret = () => {
-    // Generate a random alphanumeric string
-    const otpLength = 6
-    const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789'
-    let otp = ''
-    for (let i = 0; i < otpLength; i++) {
-      otp += characters.charAt(Math.floor(Math.random() * characters.length))
-    }
-    return otp
-  }
-
-  passport.session.passwordSecret = generateSecret()
-  await nodemailerUtils.sendMail(
-    req.user.email,
-    passport.session.passwordSecret
-  )
-
-  res.render('dashboard/passwordForgotCode', {
-    title: 'Forgot password',
-    email: req.user.email,
-  })
-})
-
-// todo: Add OTP validation here
-// Handle password forgot code on POST.
-exports.passwordForgotCodePost = [
-  body('secret')
-    .trim()
-    .escape()
-    .isLength(6)
-    .withMessage('Should be 6 characters long.')
-    .custom((value) => {
-      if (value !== passport.session.passwordSecret) {
-        throw new Error('Incorrect OTP.')
-      } else return true
-    }),
-
-  asyncHandler(async (req, res) => {
-    if (req.body.secret !== passport.session.passwordSecret) {
-      return res.render('dashboard/passwordForgotCode', {
-        title: 'Forgot password error',
-        email: req.user.email,
-        error: 'Incorrect code.',
-      })
-    }
-
-    res.render('dashboard/passwordForgotNewPassword', {
-      title: 'Create new password',
-    })
-  }),
-]
-
-// Handle password forgot new password on POST.
-exports.passwordForgotNewPasswordPost = [
-  body('newPassword')
-    .trim()
-    .isLength({ min: 8 })
-    .withMessage('New password must be atleast 8 characters long.'),
-
-  body('passwordConfirm')
-    .trim()
-    .isLength({ min: 8 })
-    .withMessage('Confirm new password must be atleast 8 characters long.')
-    .bail()
-    .custom((value, { req }) => {
-      if (value !== req.body.newPassword)
-        throw new Error(`Doesn't match the new password.`)
-      else return true
-    }),
-
-  asyncHandler(async (req, res) => {
-    const errors = validationResult(req)
-    const sanitizedData = matchedData(req, { onlyValidData: false })
-
-    if (errors.isEmpty()) {
-      const hashedPassword = await bcrypt.hash(sanitizedData.newPassword, 10)
-
-      await User.findByIdAndUpdate(req.user.id, {
-        $set: {
-          password: hashedPassword,
-        },
-      })
-
-      res.redirect('/dashboard/profile')
-    } else {
-      // provide user-entered incorrect values back to them for correction
-      const { newPassword, passwordConfirm } = sanitizedData
-
-      res.render('dashboard/passwordForgotNewPassword', {
-        title: 'Create new password error',
-        errors: errors.array(),
         newPassword,
         passwordConfirm,
       })
@@ -709,6 +606,100 @@ exports.searchPost = [
         user: req.user,
         errors: errors.array(),
         searchQuery: sanitizedData.searchQuery,
+      })
+    }
+  }),
+]
+
+// * Handle forgot password on the dashboard
+
+// Display password forgot form on GET.
+exports.passwordForgotGet = asyncHandler(async (req, res) => {
+  passport.session.passwordSecret = otpGenerator.generate(6)
+  await nodemailerUtils.sendMail(
+    req.user.email,
+    passport.session.passwordSecret
+  )
+
+  res.render('dashboard/passwordForgotCode', {
+    title: 'Forgot password',
+    email: req.user.email,
+  })
+})
+
+// Handle password forgot code on POST.
+exports.passwordForgotCodePost = [
+  body('secret')
+    .trim()
+    .escape()
+    .isLength(6)
+    .withMessage('Should be 6 characters long.')
+    .custom((value) => {
+      if (value !== passport.session.passwordSecret) {
+        throw new Error('Incorrect OTP.')
+      } else return true
+    }),
+
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req)
+    const { secret } = matchedData(req, { onlyValidData: false })
+
+    if (errors.isEmpty()) {
+      res.render('dashboard/passwordForgotNewPassword', {
+        title: 'Create new password',
+      })
+    } else {
+      res.render('dashboard/passwordForgotCode', {
+        title: 'Forgot password error',
+        email: req.user.email,
+        errors: errors.array(),
+        secret,
+      })
+    }
+  }),
+]
+
+// Handle password forgot new password on POST.
+exports.passwordForgotNewPasswordPost = [
+  body('newPassword')
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage('Must be atleast 8 characters long.'),
+
+  body('passwordConfirm')
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage('Must be atleast 8 characters long.')
+    .bail()
+    .custom((value, { req }) => {
+      if (value !== req.body.newPassword)
+        throw new Error(`Doesn't match the new password.`)
+      else return true
+    }),
+
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req)
+    const { newPassword, passwordConfirm } = matchedData(req, {
+      onlyValidData: false,
+    })
+
+    if (errors.isEmpty()) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+      await User.findByIdAndUpdate(req.user.id, {
+        $set: {
+          password: hashedPassword,
+        },
+      })
+
+      delete passport.session.passwordSecret
+      res.redirect('/dashboard/profile')
+    } else {
+      res.render('dashboard/passwordForgotNewPassword', {
+        title: 'Create new password error',
+        errors: errors.array(),
+        newPassword,
+        passwordConfirm,
       })
     }
   }),
@@ -834,6 +825,3 @@ exports.passwordForgotNewPasswordPostLanding = [
     }
   }),
 ]
-
-// todo: use opt-generator for dashboard routes
-// todo: update dashboard password forget routes
