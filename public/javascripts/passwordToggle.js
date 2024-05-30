@@ -1,4 +1,6 @@
-//- todo: show this script on pages that have password inputs
+/**
+ * Contains the logic for the password visibility toggle to function for all the password inputs.
+ */
 
 const eyeClosedIcons = document.querySelectorAll('.eyeClosed')
 const eyeOpenIcons = document.querySelectorAll('.eyeOpen')
