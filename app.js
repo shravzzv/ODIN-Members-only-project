@@ -9,6 +9,9 @@ const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcryptjs')
 const mongoose = require('mongoose')
 const MongoStore = require('connect-mongo')
+const compression = require('compression')
+const helmet = require('helmet')
+const RateLimit = require('express-rate-limit')
 require('dotenv').config()
 
 require('./config/db.config')
@@ -28,6 +31,28 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(compression()) // Compress all routes
+
+// Add helmet CSP.
+app.use(
+  helmet.contentSecurityPolicy({
+    useDefaults: true,
+    directives: {
+      'script-src': ["'self'"],
+      'font-src': ['fonts.gstatic.com'],
+      'img-src': ["'self'", 'res.cloudinary.com'],
+      'style-src': ["'self'", 'cdnjs.cloudflare.com', 'fonts.googleapis.com'],
+    },
+    reportOnly: false,
+  })
+)
+
+const limiter = RateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 50,
+})
+// Apply rate limiter to all requests
+app.use(limiter)
 
 // set up authentication middleware
 app.use(
