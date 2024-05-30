@@ -1,24 +1,23 @@
 extends layout
 
 block content
+  - const usernameError = errors && errors.find(item => item.path === 'username')
+  - const pwdError = errors && errors.find(item => item.path === 'password')
+
   h1 Sign In
 
   form(action="", method="post")
 
     .formControl 
       label(for="username") Username: 
-      input#username(type="text", name="username", placeholder="johndoe", value=username || '', , required, minlength="3", maxlength="20", autocomplete="on")
-      - const usernameError = errors && errors.find(item => item.path === 'username')
+      input#username(type="text", name="username", placeholder="johndoe", value=username || '', autocomplete="on")
       if usernameError
         span.error= usernameError.msg
 
-    .formControl
-      label(for="password") Password:
-      input#password(type="password", name="password", value=password || '', required, minlength="8")
-      - const pwdError = errors && errors.find(item => item.path === 'password')
-      if pwdError
-        span.error= pwdError.msg
+    +passwordFormControl('password', 'Password', 'password', password, pwdError)
 
-    button(type="submit") Submit
+    button.filled(type="submit") Submit
 
-    a(href="/password/forgot") Forgot password?
+  a.forgotPassword(href="/password/forgot") Forgot password?
+
+  script(src="/javascripts/passwordToggle.js", defer) 
