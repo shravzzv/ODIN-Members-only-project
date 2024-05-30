@@ -31,6 +31,14 @@ body {
 
 svg {
   fill: var(--on-surface);
+
+  .passwordVisibilityIcons & {
+    cursor: pointer;
+
+    path {
+      pointer-events: none;
+    }
+  }
 }
 
 img {
@@ -88,6 +96,24 @@ form {
         display: inline;
         width: 24px;
         outline: none;
+      }
+    }
+
+    &:has(.passwordVisibilityIcons) {
+      position: relative;
+
+      .passwordVisibilityIcons {
+        position: absolute;
+        top: 45%;
+        right: 5px;
+
+        svg {
+          fill: var(--primary);
+        }
+
+        &:has(+ .error) {
+          top: 35%;
+        }
       }
     }
   }
