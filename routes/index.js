@@ -34,8 +34,39 @@ router.post(
   userController.userSigninPost
 )
 
+// GET request to handle forgotten password.
+router.get(
+  '/password/forgot',
+  authMiddleware.redirectOnAuth,
+  userController.passwordForgotGetLanding
+)
+
+// POST request to handle forgotten password email.
+router.post(
+  '/password/forgot/email',
+  authMiddleware.redirectOnAuth,
+  userController.passwordForgotEmailPostLanding
+)
+
+// POST request to handle forgotten password email code.
+router.post(
+  '/password/forgot/code',
+  authMiddleware.redirectOnAuth,
+  userController.passwordForgotCodePostLanding
+)
+
+// POST request to create new password.
+router.post(
+  '/password/forgot/newpassword',
+  authMiddleware.redirectOnAuth,
+  userController.passwordForgotNewPasswordPostLanding
+)
+
 // redirect for common synonyms
 router.get('/register', (req, res) => res.redirect('signup'))
 router.get('/login', (req, res) => res.redirect('signin'))
+
+// redirect on non-exisent routes
+router.get('/password', (req, res) => res.redirect('/signin'))
 
 module.exports = router

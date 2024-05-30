@@ -13,6 +13,7 @@ const nodemailerUtils = require('../utils/nodemailer.util')
 const handleImage = require('../middlewares/handleImage.middleware')
 const bcrypt = require('bcryptjs')
 const passport = require('passport')
+const otpGenerator = require('otp-generator')
 
 // The landing page home.
 exports.index = (req, res) => {
@@ -475,7 +476,7 @@ exports.passwordUpdatePost = [
   body('currentPassword')
     .trim()
     .isLength({ min: 8 })
-    .withMessage('Current password must be atleast 8 characters long.')
+    .withMessage('Must be atleast 8 characters long.')
     .bail()
     .custom(async (password, { req }) => {
       // check if the current password is correct
@@ -487,7 +488,7 @@ exports.passwordUpdatePost = [
   body('newPassword')
     .trim()
     .isLength({ min: 8 })
-    .withMessage('New password must be atleast 8 characters long.')
+    .withMessage('Must be atleast 8 characters long.')
     .bail()
     .custom((newPassword, { req }) => {
       if (req.passwordMatch && newPassword === req.body.currentPassword)
@@ -498,7 +499,7 @@ exports.passwordUpdatePost = [
   body('passwordConfirm')
     .trim()
     .isLength({ min: 8 })
-    .withMessage('Confirm new password must be atleast 8 characters long.')
+    .withMessage('Must be atleast 8 characters long.')
     .bail()
     .custom((value, { req }) => {
       if (value !== req.body.newPassword)
@@ -528,93 +529,6 @@ exports.passwordUpdatePost = [
         title: 'Update password error',
         errors: errors.array(),
         currentPassword,
-        newPassword,
-        passwordConfirm,
-      })
-    }
-  }),
-]
-
-// Display password forgot form on GET.
-exports.passwordForgotGet = asyncHandler(async (req, res) => {
-  const generateSecret = () => {
-    // Generate a random alphanumeric string
-    const otpLength = 6
-    const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789'
-    let otp = ''
-    for (let i = 0; i < otpLength; i++) {
-      otp += characters.charAt(Math.floor(Math.random() * characters.length))
-    }
-    return otp
-  }
-
-  passport.session.passwordSecret = generateSecret()
-  await nodemailerUtils.sendMail(
-    req.user.email,
-    passport.session.passwordSecret
-  )
-
-  res.render('dashboard/passwordForgotCode', {
-    title: 'Forgot password',
-    email: req.user.email,
-  })
-})
-
-// Handle password forgot code on POST.
-exports.passwordForgotCodePost = asyncHandler(async (req, res) => {
-  if (req.body.secret !== passport.session.passwordSecret) {
-    return res.render('dashboard/passwordForgotCode', {
-      title: 'Forgot password error',
-      email: req.user.email,
-      error: 'Incorrect code.',
-    })
-  }
-
-  res.render('dashboard/passwordForgotNewPassword', {
-    title: 'Create new password',
-  })
-})
-
-// Handle password forgot new password on POST.
-exports.passwordForgotNewPasswordPost = [
-  body('newPassword')
-    .trim()
-    .isLength({ min: 8 })
-    .withMessage('New password must be atleast 8 characters long.'),
-
-  body('passwordConfirm')
-    .trim()
-    .isLength({ min: 8 })
-    .withMessage('Confirm new password must be atleast 8 characters long.')
-    .bail()
-    .custom((value, { req }) => {
-      if (value !== req.body.newPassword)
-        throw new Error(`Doesn't match the new password.`)
-      else return true
-    }),
-
-  asyncHandler(async (req, res) => {
-    const errors = validationResult(req)
-    const sanitizedData = matchedData(req, { onlyValidData: false })
-
-    if (errors.isEmpty()) {
-      const hashedPassword = await bcrypt.hash(sanitizedData.newPassword, 10)
-
-      await User.findByIdAndUpdate(req.user.id, {
-        $set: {
-          password: hashedPassword,
-        },
-      })
-
-      res.redirect('/dashboard/profile')
-    } else {
-      // provide user-entered incorrect values back to them for correction
-      const { newPassword, passwordConfirm } = sanitizedData
-
-      res.render('dashboard/passwordForgotNewPassword', {
-        title: 'Create new password error',
-        errors: errors.array(),
         newPassword,
         passwordConfirm,
       })
@@ -697,34 +611,217 @@ exports.searchPost = [
   }),
 ]
 
-// * the above routes are implemented.
-// * the below routes should only be accessible to the admin user.
+// * Handle forgot password on the dashboard
 
-// Display user delete form on GET.
-exports.userDeleteGet = (req, res) => {
-  res.redirect(`/dashboard/user/${req.params.id}`)
-  // res.send('UserDeleteGet not implemented.')
+// Display password forgot form on GET.
+exports.passwordForgotGet = asyncHandler(async (req, res) => {
+  passport.session.passwordSecret = otpGenerator.generate(6)
+  await nodemailerUtils.sendMail(
+    req.user.email,
+    passport.session.passwordSecret
+  )
+
+  res.render('dashboard/passwordForgotCode', {
+    title: 'Forgot password',
+    email: req.user.email,
+  })
+})
+
+// Handle password forgot code on POST.
+exports.passwordForgotCodePost = [
+  body('secret')
+    .trim()
+    .escape()
+    .isLength(6)
+    .withMessage('Should be 6 characters long.')
+    .custom((value) => {
+      if (value !== passport.session.passwordSecret) {
+        throw new Error('Incorrect OTP.')
+      } else return true
+    }),
+
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req)
+    const { secret } = matchedData(req, { onlyValidData: false })
+
+    if (errors.isEmpty()) {
+      res.render('dashboard/passwordForgotNewPassword', {
+        title: 'Create new password',
+      })
+    } else {
+      res.render('dashboard/passwordForgotCode', {
+        title: 'Forgot password error',
+        email: req.user.email,
+        errors: errors.array(),
+        secret,
+      })
+    }
+  }),
+]
+
+// Handle password forgot new password on POST.
+exports.passwordForgotNewPasswordPost = [
+  body('newPassword')
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage('Must be atleast 8 characters long.'),
+
+  body('passwordConfirm')
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage('Must be atleast 8 characters long.')
+    .bail()
+    .custom((value, { req }) => {
+      if (value !== req.body.newPassword)
+        throw new Error(`Doesn't match the new password.`)
+      else return true
+    }),
+
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req)
+    const { newPassword, passwordConfirm } = matchedData(req, {
+      onlyValidData: false,
+    })
+
+    if (errors.isEmpty()) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+      await User.findByIdAndUpdate(req.user.id, {
+        $set: {
+          password: hashedPassword,
+        },
+      })
+
+      delete passport.session.passwordSecret
+      res.redirect('/dashboard/profile')
+    } else {
+      res.render('dashboard/passwordForgotNewPassword', {
+        title: 'Create new password error',
+        errors: errors.array(),
+        newPassword,
+        passwordConfirm,
+      })
+    }
+  }),
+]
+
+// * handle forgot password on the landing page
+
+// Display forgot password form on GET.
+exports.passwordForgotGetLanding = (req, res) => {
+  res.render('landing/passwordForgot', { title: 'Password forgot' })
 }
 
-// Handle user delete on POST.
-exports.userDeletePost = (req, res) => {
-  res.redirect(`/dashboard/user/${req.params.id}`)
-  // res.send('UserDeletePost not implemented.')
-}
+// Handle password forgot email on POST.
+exports.passwordForgotEmailPostLanding = [
+  body('email')
+    .trim()
+    .escape()
+    .isEmail()
+    .withMessage('Email must be a valid email')
+    .bail()
+    .custom(async (email) => {
+      const user = await User.findOne({ email }, '_id')
+      if (!user) throw new Error(`"${email}" is not registered.`)
+    }),
 
-// Display user update form on GET.
-exports.userUpdateGet = (req, res) => {
-  res.redirect(`/dashboard/user/${req.params.id}`)
-  // res.send('UserUpdateGet not implemented.')
-}
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req)
+    const { email } = matchedData(req, { onlyValidData: false })
 
-// Handle user update on POST.
-exports.userUpdatePost = (req, res) => {
-  res.redirect(`/dashboard/user/${req.params.id}`)
-  // res.send('UserUpdatePost not implemented.')
-}
+    if (errors.isEmpty()) {
+      passport.session.passwordSecret = otpGenerator.generate(6)
+      passport.session.email = email
+      await nodemailerUtils.sendMail(email, passport.session.passwordSecret)
+      res.render('landing/passwordEmailCode', { title: 'Enter OTP', email })
+    } else {
+      res.render('landing/passwordForgot', {
+        title: 'Password forgot error',
+        email,
+        errors: errors.array(),
+      })
+    }
+  }),
+]
 
-// Get a list of all users.
-exports.usersList = (req, res) => {
-  res.send('UsersList not implemented.')
-}
+// Handle password forgot code on POST.
+exports.passwordForgotCodePostLanding = [
+  body('secret')
+    .trim()
+    .escape()
+    .isLength(6)
+    .withMessage('Should be 6 characters long.')
+    .custom((value) => {
+      if (value !== passport.session.passwordSecret) {
+        throw new Error('Incorrect OTP.')
+      } else return true
+    }),
+
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req)
+    const { secret } = matchedData(req, { onlyValidData: false })
+
+    if (errors.isEmpty()) {
+      res.render('landing/newPassword', {
+        title: 'Create new password',
+      })
+    } else {
+      res.render('landing/passwordEmailCode', {
+        title: 'Incorrect OTP',
+        errors: errors.array(),
+        secret,
+      })
+    }
+  }),
+]
+
+// Handle password forgot new password on POST.
+exports.passwordForgotNewPasswordPostLanding = [
+  body('newPassword')
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage('Must be atleast 8 characters long.'),
+
+  body('passwordConfirm')
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage('Must be atleast 8 characters long.')
+    .bail()
+    .custom((value, { req }) => {
+      if (value !== req.body.newPassword)
+        throw new Error(`Doesn't match the new password.`)
+      else return true
+    }),
+
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req)
+    const { newPassword, passwordConfirm } = matchedData(req, {
+      onlyValidData: false,
+    })
+
+    if (errors.isEmpty()) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+      await User.updateOne(
+        { email: passport.session.email },
+        {
+          $set: {
+            password: hashedPassword,
+          },
+        }
+      )
+
+      delete passport.session.email
+      delete passport.session.passwordSecret
+
+      res.redirect('/signin')
+    } else {
+      res.render('landing/newPassword', {
+        title: 'Create new password error',
+        errors: errors.array(),
+        newPassword,
+        passwordConfirm,
+      })
+    }
+  }),
+]

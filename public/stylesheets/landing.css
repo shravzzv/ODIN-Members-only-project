@@ -15,13 +15,28 @@ body {
   min-height: 100vh;
 }
 
-img,
-svg {
+img {
   max-width: 100%;
+
+  @media (prefers-color-scheme: dark) {
+    filter: brightness(0.8) contrast(1.2);
+  }
 }
 
 svg {
   fill: var(--on-surface);
+
+  .passwordVisibilityIcons & {
+    cursor: pointer;
+
+    path {
+      pointer-events: none;
+    }
+  }
+}
+
+a {
+  color: var(--primary);
 }
 
 nav {
@@ -60,14 +75,156 @@ nav {
 button {
   font-size: 14px;
   height: 40px;
-  border-radius: 20px;
+  border-radius: var(--shape-corner-full);
   padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border: none;
   cursor: pointer;
-  background-color: var(--primary);
-  color: var(--on-primary);
-  font-weight: 500;
-  text-decoration: none;
+  background-color: var(--surface-container);
+  color: var(--on-surface-variant);
+  position: relative;
+
+  /* the state layer */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    opacity: 0%;
+    background-color: var(--on-surface-variant);
+    transition: opacity 300ms ease;
+  }
+
+  &:has(svg) {
+    padding-left: 16px;
+
+    & svg {
+      width: 18px;
+      fill: var(--on-surface);
+    }
+  }
+
+  &.elevated {
+    background-color: var(--surface-container-low);
+    color: var(--primary);
+    box-shadow: var(--elevation-level-1);
+    transition: box-shadow 300ms ease;
+
+    & svg {
+      fill: var(--primary);
+    }
+
+    &::after {
+      background-color: var(--primary);
+    }
+
+    &:hover {
+      box-shadow: var(--elevation-level-2);
+    }
+  }
+
+  &.filled {
+    background-color: var(--primary);
+    color: var(--on-primary);
+
+    & svg {
+      fill: var(--on-primary);
+    }
+
+    &::after {
+      background-color: var(--on-primary);
+    }
+  }
+
+  &.filled-tonal {
+    background-color: var(--secondary-container);
+    color: var(--on-secondary-container);
+    transition: box-shadow 300ms ease;
+
+    & svg {
+      fill: var(--on-secondary-container);
+    }
+
+    &::after {
+      background-color: var(--on-secondary-container);
+    }
+
+    &:hover {
+      box-shadow: var(--elevation-level-1);
+    }
+  }
+
+  &.outlined {
+    background-color: var(--surface);
+    color: var(--primary);
+    outline: 1px solid var(--outline);
+
+    & svg {
+      fill: var(--primary);
+    }
+
+    &::after {
+      background-color: var(--primary);
+    }
+  }
+
+  &.text {
+    background-color: transparent;
+    color: var(--primary);
+
+    & svg {
+      fill: var(--primary);
+    }
+
+    &::after {
+      background-color: var(--primary);
+    }
+  }
+
+  &.icon {
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--shape-corner-full);
+    background-color: var(--surface-container);
+
+    svg {
+      width: 24px;
+      fill: var(--primary);
+    }
+  }
+
+  &:disabled {
+    opacity: 38%;
+    pointer-events: none;
+  }
+
+  &:hover::after {
+    opacity: 8%;
+  }
+
+  &:focus::after {
+    opacity: 10%;
+  }
+
+  &:active::after {
+    opacity: 10%;
+  }
+
+  &[draggable='true'] {
+    cursor: grab;
+
+    &:active::after {
+      cursor: grabbing;
+      opacity: 16%;
+    }
+  }
 }
 
 section {
@@ -174,44 +331,125 @@ main:not(:has(.hero)) {
   }
 
   form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 360px;
+    margin: 0 auto;
+
     .formControl {
-      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
 
       label {
         display: block;
-        margin-bottom: 5px;
+        color: var(--primary);
+        font-weight: 500;
+        width: 100%;
       }
 
       input,
       textarea {
-        background-color: var(--surface-container-highest);
-        color: var(--on-surface-variant);
-        border-radius: 12px;
-        border: none;
-        padding: 10px 15px;
-        display: block;
         width: 100%;
-      }
-
-      textarea {
+        padding: 10px 15px;
         resize: vertical;
+        border: none;
+        border-bottom: 1px solid var(--primary);
+        background-color: var(--surface-container);
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        color: inherit;
+        resize: vertical;
+
+        &:focus,
+        &:active {
+          outline: 2px solid var(--outline);
+        }
       }
 
       .error {
         color: var(--error);
         font-size: 0.8rem;
       }
+
+      &:has(.passwordVisibilityIcons) {
+        position: relative;
+
+        .passwordVisibilityIcons {
+          position: absolute;
+          top: 45%;
+          right: 5px;
+
+          svg {
+            fill: var(--primary);
+          }
+
+          &:has(+ .error) {
+            top: 35%;
+          }
+        }
+      }
     }
 
-    img {
-      border-radius: 10px;
+    .imageContainer {
+      position: relative;
+
+      img {
+        border-radius: 12px;
+        height: 100px;
+        width: 100%;
+        object-fit: cover;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+          rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+
+        .updateProfile & {
+          height: 250px;
+        }
+      }
+
+      button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+          rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+      }
+
+      label,
+      input {
+        display: none;
+      }
+    }
+
+    .error {
+      color: var(--error);
+      font-size: 14px;
+      display: block;
+    }
+
+    .guidelines {
+      font-size: 12px;
+      color: var(--on-surface-variant);
+      span {
+        display: block;
+      }
     }
 
     button[type='submit'] {
-      margin: 5px auto 30px;
+      margin: 5px auto 15px;
       width: 100%;
       display: block;
     }
+  }
+  .forgotPassword {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+  }
+  strong.email {
+    color: var(--primary);
   }
 }
 
@@ -273,52 +511,6 @@ main:not(:has(.hero)) {
         align-items: center;
         justify-content: space-evenly;
       }
-    }
-  }
-
-  form {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 500px;
-
-    .formControl {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      label {
-        flex: 1;
-      }
-
-      input {
-        flex: 3;
-      }
-
-      &:has(textarea) {
-        display: block;
-      }
-
-      &:has(.error) {
-        position: relative;
-        margin-bottom: 30px !important;
-      }
-
-      .error {
-        display: block;
-        position: absolute;
-        right: 0;
-        bottom: -20px;
-      }
-    }
-
-    img {
-      max-width: 250px;
-      display: block;
-      margin-bottom: 15px;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
-        rgba(0, 0, 0, 0.23) 0px 3px 6px;
     }
   }
 }
@@ -388,15 +580,6 @@ main:not(:has(.hero)) {
 
     h2 {
       font-size: 3rem;
-    }
-  }
-
-  button {
-    cursor: pointer;
-    transition: 300ms ease;
-
-    &:hover {
-      transform: scale(1.1);
     }
   }
 

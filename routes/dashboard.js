@@ -78,20 +78,6 @@ router.post(
 // If there are any routes that are of the form '/user/something', this routes should come after that.
 router.get('/user/:id', userController.userDetail)
 
-// * The below routes should only be accessible to the admin.
-
-// GET request to delete a User.
-router.get('/user/:id/delete', userController.userDeleteGet)
-
-// POST request to delete a User..
-router.post('/user/:id/delete', userController.userDeletePost)
-
-// GET request to update a User.
-router.get('/user/:id/update', userController.userUpdateGet)
-
-// POST request to update a User.
-router.post('/user/:id/update', userController.userUpdatePost)
-
 // * dashboard/club routes
 
 // Get request for the club page.

@@ -7,8 +7,12 @@ html
     meta(name="description", content="An exclusive clubhouse where members can write anonymous posts. Inside the clubhouse, members can see who the author of a post is, but outside they can only see the story and wonder who wrote it.")
     link(rel="shortcut icon", href="/images/favicon.svg", type="image/x-icon")
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css", integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w==", crossorigin="anonymous", referrerpolicy="no-referrer")
-    link(rel='stylesheet', href='/stylesheets/landing.css')
+    link(rel='stylesheet', href='/stylesheets/error.css')
   body
     h1= message
     h2= error.status
     pre #{error.stack}
+
+    a(href="/"): button.filled 
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg>
+      span Back to home
